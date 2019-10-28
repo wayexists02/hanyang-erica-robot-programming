@@ -6,7 +6,7 @@ ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트�
 
 
 
-## Codrone
+## CoDrone
 
 참조: https://www.robolink.com/codrone/
 
@@ -60,6 +60,14 @@ CoDrone.Control();
 
 
 
+## Project Ideas
+
+- 바닥 라인을 따라가면서 링을 인식하고 통과하면서 주행하기.
+- 객체를 인식하고 사람을 찾아서 따라다니기
+- 손 모양을 인식해서 드론의 행동을 제어하기
+
+
+
 ## Plan
 
 - [ ] 작동 확인 (블루투스 연결 가능 여부)
@@ -70,7 +78,16 @@ CoDrone.Control();
 
 
 
-- [ ] Arduino API를 이용해서 PC상의 C++로 드론을 제어할 수 있는지 테스트 해볼것.
+- [ ] Arduino API를 이용해서 PC상의 C++로 드론을 제어할 수 있는지 테스트 해볼것
+- [ ] 손 모양 데이터를 수집할 것
+
+
+
+### Consideration
+
+ROS 통신 방법 (Topic, Service, [Action *- optional*])을 완전히 이해할 것
+
+서로 보낼 topic 이름과 service 이름을 정의하고 팀원에게 공개할 것
 
 
 
