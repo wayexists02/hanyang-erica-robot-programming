@@ -12,6 +12,8 @@ ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트�
 
 
 
+
+
 ## 인터페이스
 
 C 또는 C++ 언어로 프로그래밍할 경우, ```#include <CoDrone.h>```를 추가해야 한다. 파이썬의 경우 ```CoDrone``` 패키지를```import```해 준다.
@@ -60,11 +62,15 @@ CoDrone.Control();
 
 
 
+
+
 ## Project Ideas
 
 - 바닥 라인을 따라가면서 링을 인식하고 통과하면서 주행하기.
 - 객체를 인식하고 사람을 찾아서 따라다니기
 - 손 모양을 인식해서 드론의 행동을 제어하기
+
+
 
 
 
@@ -88,6 +94,8 @@ CoDrone.Control();
 ROS 통신 방법 (Topic, Service, [Action *- optional*])을 완전히 이해할 것
 
 서로 보낼 topic 이름과 service 이름을 정의하고 팀원에게 공개할 것
+
+
 
 
 
