@@ -110,3 +110,7 @@ Codrone Python API: http://docs.robolink.com/
 Codrone Github: https://github.com/RobolinkInc/CoDrone
 
 http://dev.byrobot.co.kr/documents/kr/products/e_drone/library/python/e_drone/02_system/
+
+eDrone API: http://dev.byrobot.co.kr/documents/kr/products/e_drone/library/python/e_drone/
+
+CoDrone II 한국어 페이지: http://www.robolink.co.kr/web/cate02/product01.mn.php
