@@ -76,9 +76,9 @@ CoDrone.Control();
 
 ## Plan
 
-- [ ] 작동 확인 (블루투스 연결 가능 여부)
-- [ ] ROS를 raspberry pi zero 보드에 설치
-- [ ] 서버와 raspberry pi zero 보드간에 ROS 통신
+- [X] 작동 확인
+- [X] ROS를 raspberry pi zero 보드에 설치
+- [X] 서버와 raspberry pi zero 보드간에 ROS 통신
 - [ ] 카메라 영상을 받아와서 확인
 - [ ] PC에서 드론 제어
 
