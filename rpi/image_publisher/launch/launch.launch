@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<node pkg="image_publisher"
+	      name="image_publisher_node"
+		type="main.py"
+		output="screen">
+
+		<remap from="/codrone_camera" to="/image_in"/>
+
+	</node>
+</launch>
