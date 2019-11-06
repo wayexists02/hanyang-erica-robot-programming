@@ -1,0 +1,1 @@
+tensorflow object detector with ROS: https://github.com/osrf/tensorflow_object_detector
