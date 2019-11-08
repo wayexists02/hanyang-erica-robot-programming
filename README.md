@@ -1,4 +1,4 @@
-# Robot Programming
+Robot Programming
 
 
 
@@ -16,43 +16,125 @@ ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트�
 
 ## 인터페이스
 
-C 또는 C++ 언어로 프로그래밍할 경우, ```#include <CoDrone.h>```를 추가해야 한다. 파이썬의 경우 ```CoDrone``` 패키지를```import```해 준다.
-
-Python의 경우, ```CoDrone```객체를 직접 생성해야 하지만, C++언어의 경우, 객체를 라이브러리에서 생성한다. 따라서 우리는 객체를 직접 생성할 필요가 없으며, ```CoDrone```이라는 이름의 객체의 메소드를 호출하면 된다. 이를 위해서 ```CoDrone.h```파일 제일 아래쪽에 ```extern CoDroneClass CoDrone;```이 선언되어 있고, 어딘가 있는 객체를 코드에서 이용할 수 있다.
+그냥 파이썬으로 하자. ```sudo pip3 install e-drone```으로 e-drone 설치. python2버전은 e-drone라이브러리가 지원을 안한다.
 
 
 
 ### Connect
 
-연결 및 통신하려면, 블루투스로 연결한 후 다음을 시행
+E-Drone 라이브러리를 이용한다.
 
-```C++
-// 드론과 시리얼 통신 시작 band rate는 반드시 115200
-CoDrone.begin(115200);
+http://dev.byrobot.co.kr/documents/kr/products/e_drone/library/python/e_drone/
 
-// 이렇게 가까이 있는 드론 연결
-CoDrone.AutoConnect(NearbyDrone);
-```
+먼저, 라즈베리 zero 보드에서 블루투스를 비활성화한다.
 
-파이썬으로도 연결 및 프로그래밍이 가능하다.
+- ```/boot/config.txt```에서 다음 라인 추가
+
+  ```
+  enable_uart=1
+  dtoverlay=pi3-disable-bt
+  ```
+
+- ```sudo systemctl disable hciuart```
+
+- ```sudo raspi-config```에서 ```networking option```의 ```serial```을 선택한다. 그리고, 첫 번째로 뜨는 serial login 어쩌구에서는 No를, 그 다음에 뜨는 serial connection 관련해서는 yes를 클릭한다.(serial login에서 yes하면 두번째 창은 뜨지 않는다.)
+
+- Baudrate를 확인하고 변경한다.
+
+  ```stty -F /dev/ttyAMA0 115200```
+
+- 재부팅
+
+그리고, ```sudo chmod```로 ```/dev/ttyAMA0```의 퍼미션을 수정하던, 슈퍼유저 권한으로 들어간다.
+
+(슈퍼유저 들어가는 법은 ```su -```또는 ```sudo bash```중 하나 bash 창에서 입력)
+
+다음은 연결하는 파이썬 코드.
 
 ```python
-import CoDrone
+from e_drone.drone import *
+from e_drone.protocol import *
 
-drone = CoDrone.CoDrone() # CoDrone 객체 생성
-drone.pair() # 또는 인자로 드론의 unique id 번호 4자리를 넣어준다.
+drone = Drone()
+drone.open()
+
+# ...무슨 일이던 수행한다.
+
+drone.close()
 ```
+
+
 
 
 
 ### Basic Control
 
-```"CoDrone.h"```에 정의되어 있는 THROTTLE, PITCH, ROLL, YAW를 변경한 후 ```CoDrone.Control()```호출
+```python
+from e_drone.drone import *
+from e_drone.protocol import *
+from time import sleep
 
-```C++
-THROTTLE = 100;
-CoDrone.Control();
+# 드론 객체 생성
+drone = Drone()
+# 드론 연결 (마지막으로 연결된 시리얼 포트로 연결함)
+drone.open()
+
+print("Takeoff")
+drone.sendTakeOff()
+sleep(0.01)
+
+# 5초간 이륙할 시간을 준다.
+sleep(5)
+
+print("Hovering")
+for i in range(5):
+    drone.sendControlWhile(0, 0, 0, 0, 1000)
+    sleep(1)
+    print(i)
+    
+print("Throttle down")
+for i in range(5):
+    drone.sendControlWhile(0, 0, 0, -10, 1000)
+    sleep(1)
+    print(i)
+    
+print("Landing")
+drone.sendLanding()
+sleep(0.01)
+
+print("Stop")
+drone.sendStop()
+sleep(0.01)
+
+drone.close()
 ```
+
+
+
+### LED 켜기
+
+```python
+from e_drone.drone import *
+from e_drone.protocol import *
+from time import sleep
+
+# 드론 객체 생성
+drone = Drone()
+# 드론 연결
+drone.open()
+
+# 파랑색으로
+drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyBlue.value, 100)
+sleep(3)
+
+# 초록색으로
+drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyGreen.value, 100)
+sleep(3)
+
+drone.close()
+```
+
+
 
 
 
@@ -80,11 +162,8 @@ CoDrone.Control();
 - [X] ROS를 raspberry pi zero 보드에 설치
 - [X] 서버와 raspberry pi zero 보드간에 ROS 통신
 - [X] 카메라 영상을 받아와서 확인
-- [ ] PC에서 드론 제어
+- [x] PC에서 드론 제어
 
-
-
-- [ ] Arduino API를 이용해서 PC상의 C++로 드론을 제어할 수 있는지 테스트 해볼것
 - [ ] 손 모양 데이터를 수집할 것
 
 
