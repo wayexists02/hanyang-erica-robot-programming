@@ -4,3 +4,4 @@
 **/vision_opencv/
 **/tensorflow_object_detector_ros/
 **/data/
+**/*.assets/
