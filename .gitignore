@@ -5,3 +5,5 @@
 **/tensorflow_object_detector_ros/
 **/data/
 **/*.assets/
+**/.vscode/
+**/.ipynb_checkpoints/
