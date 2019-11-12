@@ -15,6 +15,7 @@ int main(int argc, char* argv[])
     while (ros::ok()) {
         drone_adaptor.test();
         rate.sleep();
+        ros::spinOnce();
     }
 
     return 0;
