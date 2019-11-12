@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<launch>
+
+	<node pkg="usb_cam"
+		  type="usb_cam_node"
+		  name="usb_cam"
+		  output="screen">
+		<param name="image_width" value="640"/>
+		<param name="image_height" value="480"/>
+    	<param name="pixel_format" value="yuyv" />
+		<param name="video_device" value="/dev/video0"/>
+    	<param name="io_method" value="mmap"/>
+	</node>
+	<node pkg="codrone_alpha"
+		  type="test_node"
+		  name="test_node"
+		  output="screen">
+
+		
+	</node>
+
+  	<node pkg="tensorflow_object_detector"
+			type="tensorflow_object_detector"
+			name="tensorflow_object_detector"
+			output="screen"
+			launch-prefix=""> <!-- use "gdb \-\-args" for debugging with gdb -->
+		<param name="graph_path" value="$(find tensorflow_object_detector)/config/ssd_mobilenet_v1_coco.pb"/> 
+		<param name="labels_path" value="$(find tensorflow_object_detector)/config/mscoco_labels.txt"/>
+		<param name="score_threshold" value="0.3"/> 
+		<param name="always_output_image" value="true"/> 
+	
+		<remap from="image_in" to="/image_in"/>
+		<remap from="image_out" to="/image_out"/>
+	</node>
+
+	<node pkg="image_view" type="image_view" name="viewer">
+		<remap from="image" to="/image_out"/>
+	</node>
+    
+    <!-- <node name="korean_ocr_node" pkg="korean_ocr" type="korean_ocr_node.py" output="screen"/> -->
+          
+</launch>
