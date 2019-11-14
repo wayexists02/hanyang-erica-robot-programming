@@ -4,21 +4,22 @@ import os
 import sys
 import time
 import signal
-import json
 
 from codrone_alpha import CoDroneAlpha
 
 
 on = True
+codrone = None
 
 
 def interrupt_handler(signo, frame):
-    global on
-    on = False
+    codrone.drone.sendStop()
     exit(0)
 
 
 def main(argv):
+    global codrone
+
     in_fd = int(argv[1])
     out_fd = int(argv[2])
 
@@ -39,20 +40,22 @@ def main(argv):
         codrone.update_data()
         data = codrone.get_data()
 
-        # json 문자열로 변환
-        json_data = json.dumps(data)
-
         # 데이터의 길이를 8바이트 문자열로 생성
-        buf = "%8d" % len(json_data)
+        buf = "%8d" % len(data)
 
         # 데이터의 길이를 먼저 전송
         os.write(out_fd, buf.encode("utf-8"))
 
         # 데이터 전송
-        os.write(out_fd, json_data.encode("utf-8"))
+        os.write(out_fd, data.encode("utf-8"))
+        
+        # 명령 길이 정보 받기
+        len_of_cmd = int(os.read(in_fd, 8).decode("utf-8"))
 
-        # codrone.update_data() 에서 이미 sleep이 길다.
-        # time.sleep(0.1)
+        # 명령 받기
+        cmd = os.read(in_fd, len_of_cmd).decode("utf-8")
+
+        codrone.send_command(cmd)
 
     os.close(in_fd)
     os.close(out_fd)

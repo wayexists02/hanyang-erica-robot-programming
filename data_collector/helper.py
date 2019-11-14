@@ -3,13 +3,16 @@ import numpy as np
 import os
 import signal
 
-CAM_INDEX = 1
+CAM_INDEX = 0
 on = True
 
-NOTHING = 0
-ONE = 1
+NOTHING = "n"
+LANDING = 0
+TAKE_OFF = 1
 TWO = 2
 THREE = 3
+FOUR = 4
+FIVE = 5
 
 index = 0
 
@@ -26,14 +29,23 @@ def mkdir():
     if not os.path.exists("../data/nothing") or not os.path.isdir("../data/nothing"):
         os.mkdir("../data/nothing")
 
-    if not os.path.exists("../data/one") or not os.path.isdir("../data/one"):
-        os.mkdir("../data/one")
+    if not os.path.exists("../data/landing") or not os.path.isdir("../data/landing"):
+        os.mkdir("../data/landing")
 
-    if not os.path.exists("../data/two") or not os.path.isdir("../data/two"):
-        os.mkdir("../data/two")
+    if not os.path.exists("../data/takeoff") or not os.path.isdir("../data/takeoff"):
+        os.mkdir("../data/takeoff")
 
-    if not os.path.exists("../data/three") or not os.path.isdir("../data/three"):
-        os.mkdir("../data/three")
+    if not os.path.exists("../data/2") or not os.path.isdir("../data/2"):
+        os.mkdir("../data/2")
+
+    if not os.path.exists("../data/3") or not os.path.isdir("../data/3"):
+        os.mkdir("../data/3")
+
+    if not os.path.exists("../data/4") or not os.path.isdir("../data/4"):
+        os.mkdir("../data/4")
+
+    if not os.path.exists("../data/5") or not os.path.isdir("../data/5"):
+        os.mkdir("../data/5")
 
 
 def read_info():
@@ -67,21 +79,30 @@ def main():
         cv2.imshow("Data Collector", frame)
 
         key = cv2.waitKey(10)
-        if key == ord('e'):
+        if key == ord('e') or key == ord('E'):
             on = False
             break
-        elif key == ord(str(NOTHING)):
-            print("Nothing")
+        elif key == ord('n') or key == ord('N'):
+            print("Nothing (N)")
             path = "../data/nothing"
-        elif key == ord(str(ONE)):
-            print("One")
-            path = "../data/one"
+        elif key == ord(str(LANDING)):
+            print("Landing (0)")
+            path = "../data/landing"
+        elif key == ord(str(TAKE_OFF)):
+            print("Takeoff (1)")
+            path = "../data/takeoff"
         elif key == ord(str(TWO)):
-            print("Two")
-            path = "../data/two"
+            print("2")
+            path = "../data/2"
         elif key == ord(str(THREE)):
-            print("Three")
-            path = "../data/three"
+            print("3")
+            path = "../data/3"
+        elif key == ord(str(FOUR)):
+            print("4")
+            path = "../data/4"
+        elif key == ord(str(FIVE)):
+            print("5")
+            path = "../data/5"
         else:
             continue
 

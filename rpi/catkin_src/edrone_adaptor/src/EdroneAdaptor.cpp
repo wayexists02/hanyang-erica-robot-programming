@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <cstring>
 
+#include <jsoncpp/json/json.h>
+
 #include "edrone_adaptor/EdroneAdaptor.hpp"
 
 
@@ -14,9 +16,10 @@
  * 생성자
  */
 EdroneAdaptor::EdroneAdaptor(ros::NodeHandle* _nh)
-    : nh(_nh)
+    : nh(_nh), flag(FLAGS::INFO)
 {
     info_pub = nh->advertise<std_msgs::String>("codrone_info", 0);
+    cmd_sub = nh->subscribe("codrone_cmd", 0, &EdroneAdaptor::handleCmd, this);
 }
 
 EdroneAdaptor::~EdroneAdaptor()
@@ -91,6 +94,37 @@ void EdroneAdaptor::test()
 }
 
 /**
+ * 명령어를 받으면 호출되는 콜백
+ */
+void EdroneAdaptor::handleCmd(const drone_message::DroneCommand::ConstPtr& msg_ptr)
+{
+    if (this->flag == FLAGS::INFO) return;
+
+    Json::Value root;
+    
+    root["takeOff"] = msg_ptr->takeOff;
+    root["roll"] = msg_ptr->roll;
+    root["pitch"] = msg_ptr->pitch;
+    root["yaw"] = msg_ptr->yaw;
+    root["throttle"] = msg_ptr->throttle;
+
+    std::string cmd = root.asString();
+
+    int len_of_data = strlen(cmd.c_str());
+
+    char lenbuf[16] = {0,};
+    sprintf(lenbuf, "%8d", len_of_data);
+
+    // 명령의 길이를 먼저 전송
+    write(this->out_fd, lenbuf, 8);
+
+    // 명령을 전송
+    write(this->out_fd, cmd.c_str(), len_of_data);
+
+    this->flag = FLAGS::INFO;
+}
+
+/**
  * 드론으로부터 데이터를 받아옴
  * 
  * Returns:
@@ -98,6 +132,8 @@ void EdroneAdaptor::test()
  */
 std::string EdroneAdaptor::getDataFromDrone()
 {
+    if (this->flag == FLAGS::CMD) return std::string("");
+
     // 일단 json 데이터의 길이를 받아옴
     char len_of_data[8] = {0,};
     read(this->in_fd, len_of_data, 8);
@@ -130,4 +166,6 @@ void EdroneAdaptor::forward(std::string& data)
 
     // 메시지 데이터 클리어
     msg.data.clear();
+
+    this->flag = FLAGS::CMD;
 }

@@ -1,6 +1,7 @@
 from e_drone.drone import *
 from e_drone.protocol import *
 from time import sleep
+import json
 
 
 class CoDroneAlpha():
@@ -72,7 +73,59 @@ class CoDroneAlpha():
             # "yaw": self.altitude.Yaw,
         }
         
-        return data
+        return json.dumps(data)
+
+    def send_command(self, command_set):
+        '''
+        드론에 내리는 명령을 받고 드론 컨트롤러에게 명령을 내려보냄
+
+        Parameters:
+        :command_set    json 형식으로 되어 있는 명령 집합
+        '''
+
+        command_set = json.loads(cp, command_set)
+
+        # take off 정보 추출
+        if command_set["takeOff"] == "true":
+            print("Take off")
+            self.drone.sendTakeOff()
+        elif command_set["takeOff"] == "false":
+            print("Landing...")
+            eslf.drone.sendLanding()
+
+        # 조종 정보
+        roll = 0
+        pitch = 0
+        yaw = 0
+        throttle = 0
+
+        # 조종 정보 추출
+        try:
+            if command_set["roll"] != "":
+                roll = int(command_set["roll"])
+
+            if command_set["pitch"] != "":
+                pitch = int(command_set["pitch"])
+
+            if command_set["yaw"] != "":
+                yaw = int(command_set["yaw"])
+
+            if command_set["throttle"] != "":
+                throttle = int(command_set["throttle"])
+
+        except ValueError as e:
+            print("INVALID input:", e)
+
+        # 디버깅
+        print("Comamnd Set:")
+        print("TakeOff: {}".format(command_set["takeOff"]))
+        print("Roll: {}".format(roll))
+        print("Pitch: {}".format(pitch))
+        print("Yaw: {}".format(yaw))
+        print("Throttle: {}".format(throttle))
+
+        # 드론에 명령
+        self.drone.sendControlWhile(roll, pitch, yaw, throttle, 100)
 
     def motion_handler(self, motion):
         '''

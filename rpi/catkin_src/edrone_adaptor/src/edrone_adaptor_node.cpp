@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
 
         // 데이터를 드론으로부터 받아옴
         data = drone_adaptor->getDataFromDrone();
+        if (data == "") continue;
         
         // 데이터를 ROS 토픽으로 포워딩
         drone_adaptor->forward(data);
@@ -50,5 +51,5 @@ int main(int argc, char* argv[])
 void int_handler(int signo)
 {
     delete drone_adaptor;
-    ros::requestShutdown();
+    ros::shutdown();
 }
