@@ -26,8 +26,8 @@ def mkdir():
     if not os.path.exists("../data") or not os.path.isdir("../data"):
         os.mkdir("../data")
 
-    if not os.path.exists("../data/nothing") or not os.path.isdir("../data/nothing"):
-        os.mkdir("../data/nothing")
+    if not os.path.exists("../data/zero") or not os.path.isdir("../data/zero"):
+        os.mkdir("../data/zero")
 
     if not os.path.exists("../data/landing") or not os.path.isdir("../data/landing"):
         os.mkdir("../data/landing")
