@@ -6,10 +6,12 @@ import signal
 CAM_INDEX = 1
 on = True
 
-NOTHING = 0
+ZERO = 0
 ONE = 1
 TWO = 2
 THREE = 3
+FOUR = 4
+FIVE = 5
 
 index = 0
 
@@ -23,8 +25,8 @@ def mkdir():
     if not os.path.exists("../data") or not os.path.isdir("../data"):
         os.mkdir("../data")
 
-    if not os.path.exists("../data/nothing") or not os.path.isdir("../data/nothing"):
-        os.mkdir("../data/nothing")
+    if not os.path.exists("../data/zero") or not os.path.isdir("../data/zero"):
+        os.mkdir("../data/zero")
 
     if not os.path.exists("../data/one") or not os.path.isdir("../data/one"):
         os.mkdir("../data/one")
@@ -34,6 +36,12 @@ def mkdir():
 
     if not os.path.exists("../data/three") or not os.path.isdir("../data/three"):
         os.mkdir("../data/three")
+        
+    if not os.path.exists("../data/four") or not os.path.isdir("../data/four"):
+        os.mkdir("../data/four")
+        
+    if not os.path.exists("../data/five") or not os.path.isdir("../data/five"):
+        os.mkdir("../data/five")
 
 
 def read_info():
@@ -70,9 +78,9 @@ def main():
         if key == ord('e'):
             on = False
             break
-        elif key == ord(str(NOTHING)):
-            print("Nothing")
-            path = "../data/nothing"
+        elif key == ord(str(ZERO)):
+            print("Zero")
+            path = "../data/zero"
         elif key == ord(str(ONE)):
             print("One")
             path = "../data/one"
@@ -82,6 +90,12 @@ def main():
         elif key == ord(str(THREE)):
             print("Three")
             path = "../data/three"
+        elif key == ord(str(FOUR)):
+            print("Four")
+            path = "../data/four"
+        elif key == ord(str(FIVE)):
+            print("Five")
+            path = "../data/five"
         else:
             continue
 
