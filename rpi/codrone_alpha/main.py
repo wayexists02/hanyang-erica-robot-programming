@@ -40,6 +40,9 @@ def main(argv):
         codrone.update_data()
         data = codrone.get_data()
 
+        if data is None:
+            continue
+
         # 데이터의 길이를 8바이트 문자열로 생성
         buf = "%8d" % len(data)
 

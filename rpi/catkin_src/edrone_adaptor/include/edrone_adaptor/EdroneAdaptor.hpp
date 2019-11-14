@@ -3,6 +3,8 @@
 
 #include <ros/ros.h>
 #include <string>
+#include <jsoncpp/json/json.h>
+// #include <thread>
 #include "drone_message/DroneCommand.h"
 
 enum class FLAGS {
@@ -19,6 +21,7 @@ public:
     std::string getDataFromDrone();
     void forward(std::string& data);
     void handleCmd(const drone_message::DroneCommand::ConstPtr& msg_ptr);
+    void sendCmd();
     void test();
 
 protected:
@@ -27,7 +30,14 @@ protected:
     ros::Publisher info_pub;
     ros::Subscriber cmd_sub;
 
-    int pipefd[2];
+    Json::Value root;
+    Json::StyledWriter writer;
+    Json::Reader reader;
+
+    // std::mutex mutex;
+
+    int pipefd_in[2];
+    int pipefd_out[2];
     int pid;
 
     FLAGS flag;

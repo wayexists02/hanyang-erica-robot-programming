@@ -10,6 +10,7 @@
 #include <jsoncpp/json/json.h>
 
 #include "edrone_adaptor/EdroneAdaptor.hpp"
+#include "drone_message/DroneInfo.h"
 
 
 /**
@@ -18,8 +19,16 @@
 EdroneAdaptor::EdroneAdaptor(ros::NodeHandle* _nh)
     : nh(_nh), flag(FLAGS::INFO)
 {
-    info_pub = nh->advertise<std_msgs::String>("codrone_info", 0);
+    info_pub = nh->advertise<drone_message::DroneInfo>("codrone_info", 0);
     cmd_sub = nh->subscribe("codrone_cmd", 0, &EdroneAdaptor::handleCmd, this);
+
+    root["takeOff"] = "false";
+    root["roll"] = "0";
+    root["pitch"] = "0";
+    root["yaw"] = "0";
+    root["throttle"] = "0";
+    root["lightColor"] = "blue";
+    root["lightIntensity"] = "100";
 }
 
 EdroneAdaptor::~EdroneAdaptor()
@@ -39,9 +48,16 @@ EdroneAdaptor::~EdroneAdaptor()
 void EdroneAdaptor::createAdaptor()
 {
     // python3 과 통신하기 위한 파이프 생성
-    if (pipe(this->pipefd) < 0) {
+    if (pipe(this->pipefd_in) < 0) {
         // 파이프가 생성실패하면 에러 메시지 뱉고 종료
-        ROS_ERROR("CANNOT open pipe!");
+        ROS_ERROR("CANNOT open pipe (in)!");
+        ros::requestShutdown();
+        return;
+    }
+    // python3 과 통신하기 위한 파이프 생성
+    if (pipe(this->pipefd_out) < 0) {
+        // 파이프가 생성실패하면 에러 메시지 뱉고 종료
+        ROS_ERROR("CANNOT open pipe (out)!");
         ros::requestShutdown();
         return;
     }
@@ -62,8 +78,8 @@ void EdroneAdaptor::createAdaptor()
 
         // 파이프 file descriptor를 하위 프로세스에게 전달해줘야함
         // 그러기 위해 file descriptor들을 문자열로 바꿈
-        sprintf(fd1, "%d", this->pipefd[0]);
-        sprintf(fd2, "%d", this->pipefd[1]);
+        sprintf(fd1, "%d", this->pipefd_out[0]);
+        sprintf(fd2, "%d", this->pipefd_in[1]);
 
         // 현재 사용자의 홈 디렉토리 경로를 얻어옴
         char* homedir = getenv("HOME");
@@ -77,8 +93,12 @@ void EdroneAdaptor::createAdaptor()
     }
     else {
         // 부모 프로세스라면, 이것을 실행함
-        this->in_fd = this->pipefd[0];
-        this->out_fd = this->pipefd[1];
+        this->in_fd = this->pipefd_in[0];
+        this->out_fd = this->pipefd_out[1];
+
+        close(this->pipefd_in[1]);
+        close(this->pipefd_out[0]);
+
         ROS_INFO("Child process was started!");
         ROS_INFO("IN FD: %d", this->in_fd);
         ROS_INFO("OUT FD: %d", this->out_fd);
@@ -93,22 +113,11 @@ void EdroneAdaptor::test()
     write(this->out_fd, "TEST", strlen("TEST"));
 }
 
-/**
- * 명령어를 받으면 호출되는 콜백
- */
-void EdroneAdaptor::handleCmd(const drone_message::DroneCommand::ConstPtr& msg_ptr)
+void EdroneAdaptor::sendCmd()
 {
     if (this->flag == FLAGS::INFO) return;
 
-    Json::Value root;
-    
-    root["takeOff"] = msg_ptr->takeOff;
-    root["roll"] = msg_ptr->roll;
-    root["pitch"] = msg_ptr->pitch;
-    root["yaw"] = msg_ptr->yaw;
-    root["throttle"] = msg_ptr->throttle;
-
-    std::string cmd = root.asString();
+    std::string cmd = this->writer.write(root);
 
     int len_of_data = strlen(cmd.c_str());
 
@@ -122,6 +131,24 @@ void EdroneAdaptor::handleCmd(const drone_message::DroneCommand::ConstPtr& msg_p
     write(this->out_fd, cmd.c_str(), len_of_data);
 
     this->flag = FLAGS::INFO;
+}
+
+/**
+ * 명령어를 받으면 호출되는 콜백
+ */
+void EdroneAdaptor::handleCmd(const drone_message::DroneCommand::ConstPtr& msg_ptr)
+{
+    // mutex.lock();
+    
+    root["takeOff"] = msg_ptr->takeOff;
+    root["roll"] = msg_ptr->roll;
+    root["pitch"] = msg_ptr->pitch;
+    root["yaw"] = msg_ptr->yaw;
+    root["throttle"] = msg_ptr->throttle;
+    root["lightColor"] = msg_ptr->lightColor;
+    root["lightIntensity"] = msg_ptr->lightIntensity;
+
+    // mutex.unlock();
 }
 
 /**
@@ -156,16 +183,34 @@ std::string EdroneAdaptor::getDataFromDrone()
 void EdroneAdaptor::forward(std::string& data)
 {
     // 메시지 객체 1번만 생성 후 재활용
-    static std_msgs::String msg;
+    static drone_message::DroneInfo msg;
+    static Json::Value info_value;
 
     // 메시지 객체에 데이터 채우기
-    msg.data = data;
+    this->reader.parse(data, info_value);
+
+    msg.accel.resize(3);
+    msg.accel[0] = info_value["accelX"].asInt();
+    msg.accel[1] = info_value["accelY"].asInt();
+    msg.accel[2] = info_value["accelZ"].asInt();
+
+    msg.gyro.resize(3);
+    msg.gyro[0] = info_value["gyroRoll"].asInt();
+    msg.gyro[1] = info_value["gyroPitch"].asInt();
+    msg.gyro[2] = info_value["gyroYaw"].asInt();
+
+    msg.angle.resize(3);
+    msg.angle[0] = info_value["angleRoll"].asInt();
+    msg.angle[1] = info_value["anglePitch"].asInt();
+    msg.angle[2] = info_value["angleYaw"].asInt();
 
     // 메시지 퍼블리싱
     info_pub.publish(msg);
 
     // 메시지 데이터 클리어
-    msg.data.clear();
+    msg.accel.clear();
+    msg.gyro.clear();
+    msg.angle.clear();
 
     this->flag = FLAGS::CMD;
 }

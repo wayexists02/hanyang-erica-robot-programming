@@ -41,6 +41,8 @@ int main(int argc, char* argv[])
         // 데이터를 ROS 토픽으로 포워딩
         drone_adaptor->forward(data);
 
+        drone_adaptor->sendCmd();
+
         rate.sleep();
         ros::spinOnce();
     }

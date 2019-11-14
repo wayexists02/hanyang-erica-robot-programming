@@ -15,6 +15,7 @@ class CoDroneAlpha():
 
         self.motion = None
         self.altitude = None
+        self.on_flying = False
 
     def init(self):
         '''
@@ -48,6 +49,9 @@ class CoDroneAlpha():
         Returns:
         :data           Dictionary 자료구조로 저장된 데이터
         '''
+
+        if self.motion is None:
+            return None
 
         data = {
             # 모션 센서 정보들
@@ -83,21 +87,23 @@ class CoDroneAlpha():
         :command_set    json 형식으로 되어 있는 명령 집합
         '''
 
-        command_set = json.loads(cp, command_set)
+        command_set = json.loads(command_set)
 
         # take off 정보 추출
-        if command_set["takeOff"] == "true":
+        if command_set["takeOff"] == "true" and self.on_flying is False:
             print("Take off")
             self.drone.sendTakeOff()
-        elif command_set["takeOff"] == "false":
+        elif command_set["takeOff"] == "false" and self.on_flying is True:
             print("Landing...")
-            eslf.drone.sendLanding()
+            self.drone.sendLanding()
 
         # 조종 정보
         roll = 0
         pitch = 0
         yaw = 0
         throttle = 0
+        Color = LightFlagsDrone.BodyGreen.value
+        lightIntensity = 100
 
         # 조종 정보 추출
         try:
@@ -113,6 +119,16 @@ class CoDroneAlpha():
             if command_set["throttle"] != "":
                 throttle = int(command_set["throttle"])
 
+            lightColor = command_set["lightColor"]
+            lightIntensity = int(command_set["lightIntensity"])
+
+            if lightColor == "red":
+                color = LightFlagsDrone.BodyRed.value
+            elif lightColor == "green":
+                color = LightFlagsDrone.BodyGreen.value
+            elif lightColor == "blue":
+                color = LightFlagsDrone.BodyBlue.value
+
         except ValueError as e:
             print("INVALID input:", e)
 
@@ -123,9 +139,12 @@ class CoDroneAlpha():
         print("Pitch: {}".format(pitch))
         print("Yaw: {}".format(yaw))
         print("Throttle: {}".format(throttle))
+        print("Light Color: {}".format(command_set["lightColor"]))
+        print("Light Intensity: {}".format(command_set["lightIntensity"]))
 
         # 드론에 명령
         self.drone.sendControlWhile(roll, pitch, yaw, throttle, 100)
+        self.drone.sendLightManual(DeviceType.Drone, color, lightIntensity)
 
     def motion_handler(self, motion):
         '''
@@ -136,10 +155,10 @@ class CoDroneAlpha():
         '''
         
         # 디버깅을 위한 로그
-        print("--- Motion Data ---")
-        print("  Accel (x, y, z): {0}, {1}, {2}".format(motion.accelX, motion.accelY, motion.accelZ))
-        print("  Gyro  (r, p, y): {0}, {1}, {2}".format(motion.gyroRoll, motion.gyroPitch, motion.gyroYaw))
-        print("  Angle (r, p, y): {0}, {1}, {2}".format(motion.angleRoll, motion.anglePitch, motion.angleYaw))
+        # print("--- Motion Data ---")
+        # print("  Accel (x, y, z): {0}, {1}, {2}".format(motion.accelX, motion.accelY, motion.accelZ))
+        # print("  Gyro  (r, p, y): {0}, {1}, {2}".format(motion.gyroRoll, motion.gyroPitch, motion.gyroYaw))
+        # print("  Angle (r, p, y): {0}, {1}, {2}".format(motion.angleRoll, motion.anglePitch, motion.angleYaw))
 
         # 저장한 정보 업데이트
         self.motion = motion
