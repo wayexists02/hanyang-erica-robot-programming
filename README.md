@@ -1,5 +1,6 @@
-Robot Programming
+# Robot Programming
 
+김영평, 송희원, 이재영
 
 
 ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트에서는 ROBOLINK사의 Codrone이라는 드론 위에 ROS와 그 노드들을 프로그래밍하고 구동해봄으로써, ROS를 학습하고자 한다.
