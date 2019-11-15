@@ -19,7 +19,7 @@ class ImagePublisher():
         from PIL import Image
 
         image_bytes = self.pi_camera.capture()
-        image = Image.open(image_bytes).convert("RGB")
+        image = Image.open(image_bytes).convert("RGB").rotate(180)
         cv_image = np.array(image)
         cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
 

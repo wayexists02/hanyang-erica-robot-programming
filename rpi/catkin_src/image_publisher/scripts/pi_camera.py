@@ -22,7 +22,7 @@ class PiCamera():
     def capture(self):
         stream = io.BytesIO()
 
-        self.camera.capture(stream, format="jpeg", resize=(224, 224))
+        self.camera.capture(stream, format="jpeg", resize=(128, 128))
         stream.seek(0)
         return stream
 

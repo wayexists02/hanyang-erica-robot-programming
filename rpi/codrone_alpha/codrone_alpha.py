@@ -92,9 +92,11 @@ class CoDroneAlpha():
         # take off 정보 추출
         if command_set["takeOff"] == "true" and self.on_flying is False:
             print("Take off")
+            self.on_flying = True
             self.drone.sendTakeOff()
         elif command_set["takeOff"] == "false" and self.on_flying is True:
             print("Landing...")
+            self.on_flying = False
             self.drone.sendLanding()
 
         # 조종 정보
@@ -103,6 +105,7 @@ class CoDroneAlpha():
         yaw = 0
         throttle = 0
         Color = LightFlagsDrone.BodyGreen.value
+        lightColor = "blue"
         lightIntensity = 100
 
         # 조종 정보 추출
@@ -119,8 +122,10 @@ class CoDroneAlpha():
             if command_set["throttle"] != "":
                 throttle = int(command_set["throttle"])
 
-            lightColor = command_set["lightColor"]
-            lightIntensity = int(command_set["lightIntensity"])
+            if command_set["lightColor"] != "":
+                lightColor = command_set["lightColor"]
+            if command_set["lightIntensity"] != "":
+                lightIntensity = int(command_set["lightIntensity"])
 
             if lightColor == "red":
                 color = LightFlagsDrone.BodyRed.value
