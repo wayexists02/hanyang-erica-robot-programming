@@ -7,3 +7,5 @@
 **/*.assets/
 **/.vscode/
 **/.ipynb_checkpoints/
+**/ckpts/
+**/*.pyc
