@@ -4,8 +4,10 @@ import rospy
 from pi_camera import PiCamera
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
+from PIL import Image
 import numpy as np
 import cv2
+import io
 
 
 class ImagePublisher():
@@ -14,14 +16,15 @@ class ImagePublisher():
         self.pi_camera = PiCamera()
         self.publisher = rospy.Publisher("/codrone_camera", Image, queue_size=10)
         self.bridge = CvBridge()
+        self.pi_camera.open()
+
+    def __del__(self):
+        self.pi_camera.close()
 
     def get_cv_image(self):
-        from PIL import Image
-
-        image_bytes = self.pi_camera.capture()
-        image = Image.open(image_bytes).convert("RGB").rotate(180)
-        cv_image = np.array(image)
-        cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
+        stream = self.pi_camera.capture()
+        data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+        cv_image = cv2.imdecode(data, 1)
 
         return cv_image
 
