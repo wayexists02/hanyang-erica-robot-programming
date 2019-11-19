@@ -5,6 +5,18 @@
 
 ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트에서는 ROBOLINK사의 Codrone이라는 드론 위에 ROS와 그 노드들을 프로그래밍하고 구동해봄으로써, ROS를 학습하고자 한다.
 
+## Preparation
+
+1. server/catkin_src/* 의 모든 파일을 서버의 catkin_ws/src/ 에 넣는다.
+2. rpi/ros/codrone_alpha 를 raspberry pi 의 $HOME/ 에 넣는다.
+3. rpi/ros/catkin_src/* 의 모든 파일을 raspberry pi 의 catkin_ws/src/ 에 넣는다.
+4 각각 빌드한다.
+
+## Execution
+
+1. 서버와 코드론을 통신 가능한 네트워크로 연결하고, 서버에 ```roscore```를 실행
+2. 서버에서 ```roslaunch codrone_alpha launch.launch```
+3. Raspberry pi에서 ```roslaunch codrone_alpha_pi launch.launch```를 
 
 
 ## CoDrone
