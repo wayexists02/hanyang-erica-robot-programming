@@ -5,6 +5,11 @@
 
 ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트에서는 ROBOLINK사의 Codrone이라는 드론 위에 ROS와 그 노드들을 프로그래밍하고 구동해봄으로써, ROS를 학습하고자 한다.
 
+## Goals
+- [X] 드론을 코드로 제어하기 (ROS topic으로 드론 제어 성공)
+- [ ] 색깔이 있는 링 통과하기
+- [ ] 수신호로 드론에게 명령을 내리기
+
 ## Preparation
 
 1. server/catkin_src/* 의 모든 파일을 서버의 catkin_ws/src/ 에 넣는다.
