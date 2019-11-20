@@ -123,16 +123,10 @@ class CoDroneAlpha():
                 throttle = int(command_set["throttle"])
 
             if command_set["lightColor"] != "":
-                lightColor = command_set["lightColor"]
+                lightColor = int(command_set["lightColor"], 0)
             if command_set["lightIntensity"] != "":
                 lightIntensity = int(command_set["lightIntensity"])
 
-            if lightColor == "red":
-                color = LightFlagsDrone.BodyRed.value
-            elif lightColor == "green":
-                color = LightFlagsDrone.BodyGreen.value
-            elif lightColor == "blue":
-                color = LightFlagsDrone.BodyBlue.value
 
         except ValueError as e:
             print("INVALID input:", e)
@@ -149,7 +143,7 @@ class CoDroneAlpha():
 
         # 드론에 명령
         self.drone.sendControlWhile(roll, pitch, yaw, throttle, 100)
-        self.drone.sendLightManual(DeviceType.Drone, color, lightIntensity)
+        self.drone.sendLightManual(DeviceType.Drone, lightColor, lightIntensity)
 
     def motion_handler(self, motion):
         '''
