@@ -17,6 +17,11 @@ class CoDroneAlpha():
         self.altitude = None
         self.on_flying = False
 
+        self.lightColorR = 100
+        self.lightColorG = 100
+        self.lightColorB = 100
+
+
     def init(self):
         '''
         드론 객체 준비
@@ -105,7 +110,6 @@ class CoDroneAlpha():
         yaw = 0
         throttle = 0
         # Color = LightFlagsDrone.BodyGreen.value
-        # lightColor = "blue"
         # lightIntensity = 100
 
         # 조종 정보 추출
@@ -134,6 +138,13 @@ class CoDroneAlpha():
             # elif lightColor == "blue":
             #     color = LightFlagsDrone.BodyBlue.value
 
+            if command_set["lightColorR"] != "":
+                self.lightColorR = int(command_set["lightColorR"])
+            if command_set["lightColorG"] != "":
+                self.lightColorG = int(command_set["lightColorG"])
+            if command_set["lightColorB"] != "":
+                self.lightColorB = int(command_set["lightColorB"])
+
         except ValueError as e:
             print("INVALID input:", e)
 
@@ -149,9 +160,9 @@ class CoDroneAlpha():
 
         # 드론에 명령
         self.drone.sendControlWhile(roll, pitch, yaw, throttle, 100)
-        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyRed, int(command_set["lightColorR"]))
-        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyGreen, int(command_set["lightColorG"]))
-        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyBlue, int(command_set["lightColorB"]))
+        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyRed, self.lightColorR)
+        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyGreen, self.lightColorG)
+        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyBlue, self.lightColorB)
 
     def motion_handler(self, motion):
         '''
