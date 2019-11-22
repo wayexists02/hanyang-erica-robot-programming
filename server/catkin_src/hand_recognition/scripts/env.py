@@ -1,15 +1,21 @@
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 ETA = 1e-3
-EPOCHS = 50
+EPOCHS = 30
 
-TRAIN_PATH = "./data/train"
-VALID_PATH = "./data/valid"
+NOTHING_TRAIN_PATH = "./data/nothing_or_sign/train"
+NOTHING_VALID_PATH = "./data/nothing_or_sign/valid"
+SIGN_TRAIN_PATH = "./data/sign_detection/train"
+SIGN_VALID_PATH = "./data/sign_detection/valid"
 
 WIDTH = 128
 HEIGHT = 128
 
-CAT = [
+NOTHING_CAT = [
     "nothing",
+    "sign"
+]
+
+SIGN_CAT = [
     "landing",
     "takeoff",
     "2",
@@ -18,4 +24,5 @@ CAT = [
     "5"
 ]
 
-CLF_CKPT_PATH = "./ckpts/clf.pth"
+SIGN_CLF_CKPT_PATH = "./ckpts/sign_clf.pth"
+NOTHING_CLF_CKPT_PATH = "./ckpts/nothing_clf.pth"

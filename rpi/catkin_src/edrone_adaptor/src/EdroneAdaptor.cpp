@@ -27,8 +27,10 @@ EdroneAdaptor::EdroneAdaptor(ros::NodeHandle* _nh)
     root["pitch"] = "0";
     root["yaw"] = "0";
     root["throttle"] = "0";
-    root["lightColor"] = "blue";
-    root["lightIntensity"] = "100";
+    root["lightColorR"] = "100";
+    root["lightColorR"] = "100";
+    root["lightColorR"] = "100";
+    // root["lightIntensity"] = "100";
 }
 
 EdroneAdaptor::~EdroneAdaptor()

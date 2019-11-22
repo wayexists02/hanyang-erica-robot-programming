@@ -1,18 +1,23 @@
 import torch
 from torch import nn, optim
-from models.classifier import Classifier
+from models.classifierVGG import ClassifierVGG
+# from models.classifier import Classifier
 from models.dataloader import DataLoader
 from env import *
 
+
+CLF_CKPT_PATH = NOTHING_CLF_CKPT_PATH
+# CLF_CKPT_PATH = SIGN_CLF_CKPT_PATH
 
 def main():
     train_loader = DataLoader(train=True, noise=True, flip=True, batch_size=BATCH_SIZE)
     valid_loader = DataLoader(train=False, noise=False, flip=False, batch_size=BATCH_SIZE)
 
-    model = Classifier().cuda()
+    model = ClassifierVGG().cuda()
+    # model.load(CLF_CKPT_PATH)
 
     criterion = nn.NLLLoss()
-    optimizer = optim.Adam(model.parameters(), lr=ETA, weight_decay=1e-2)
+    optimizer = optim.Adam(model.parameters(), lr=ETA, weight_decay=1e-1)
 
     top_valid_acc = 0.0
 

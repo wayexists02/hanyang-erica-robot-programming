@@ -9,3 +9,5 @@
 **/.ipynb_checkpoints/
 **/ckpts/
 **/*.pyc
+**/__pycache__/
+data_collector/index.txt

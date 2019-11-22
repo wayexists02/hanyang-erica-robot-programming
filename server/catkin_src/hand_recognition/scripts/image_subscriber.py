@@ -26,7 +26,7 @@ class ImageSubscriber():
     def _callback(self, msg):
         cv_img = self.cvbridge.imgmsg_to_cv2(msg)
         cv_img = cv2.resize(cv_img, dsize=(HEIGHT, WIDTH))
-        img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2HSV)
+        img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
         
         while len(self.img_buf) > 10:
             self.img_buf.pop(0)

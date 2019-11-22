@@ -6,6 +6,15 @@ import os
 from env import *
 
 
+TRAIN_PATH = NOTHING_TRAIN_PATH
+VALID_PATH = NOTHING_VALID_PATH
+CAT = NOTHING_CAT
+
+# TRAIN_PATH = SIGN_TRAIN_PATH
+# VALID_PATH = SIGN_VALID_PATH
+# CAT = SIGN_CAT
+
+
 class DataLoader():
 
     def __init__(self, batch_size, train=True, noise=True, flip=True):
@@ -26,6 +35,9 @@ class DataLoader():
         self.batch_size = batch_size
         self.num_batches = int(np.ceil(self.n / self.batch_size))
 
+        self.min_lim = (0, 10, 10)
+        self.max_lim = (45, 240, 255)
+
     def __len__(self):
         return self.num_batches
 
@@ -40,7 +52,7 @@ class DataLoader():
             start = b*self.batch_size
             end = min((b+1)*self.batch_size, self.n)
 
-            x_batch = np.zeros(((end - start), 3, 128, 128))
+            x_batch = np.zeros(((end - start), 3, HEIGHT, WIDTH))
             y_batch = np.zeros(((end - start),))
 
             for i in range(start, end):
@@ -69,21 +81,25 @@ class DataLoader():
         img = cv2.imread(path)
         
         img = cv2.resize(img, dsize=(WIDTH, HEIGHT))
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         if self.flip is True:
             if np.random.rand() < 0.5:
-                img = img[::-1, :, :]
+                img = img[::-1, :]
             if np.random.rand() < 0.5:
-                img = img[:, ::-1, :]
+                img = img[:, ::-1]
 
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        img = img.astype(np.float32)
-        img = (img - 128) / 128
+        img = img.astype(np.int32)
 
         if self.noise is True and np.random.rand() < 0.5:
-            img = img + np.random.randn(*img.shape) * 0.05
-            img[img < -1] = -0.95
-            img[img > 1] = 0.95
+            img = img + np.random.randn(*img.shape) * 2
+            img[img < 0] = 0
+            img[img > 255] = 255
+
+        img = img.astype(np.float32)
+        # print(img.max(), img.min())
+        img = (img - 128) / 256
+        # print(img.shape)
 
         img = np.transpose(img, (2, 0, 1))
         return img
