@@ -28,8 +28,8 @@ EdroneAdaptor::EdroneAdaptor(ros::NodeHandle* _nh)
     root["yaw"] = "0";
     root["throttle"] = "0";
     root["lightColorR"] = "100";
-    root["lightColorR"] = "100";
-    root["lightColorR"] = "100";
+    root["lightColorG"] = "100";
+    root["lightColorB"] = "100";
     // root["lightIntensity"] = "100";
 }
 
@@ -147,8 +147,10 @@ void EdroneAdaptor::handleCmd(const drone_message::DroneCommand::ConstPtr& msg_p
     root["pitch"] = msg_ptr->pitch;
     root["yaw"] = msg_ptr->yaw;
     root["throttle"] = msg_ptr->throttle;
-    root["lightColor"] = msg_ptr->lightColor;
-    root["lightIntensity"] = msg_ptr->lightIntensity;
+    root["lightColorR"] = msg_ptr->lightColorR;
+    root["lightColorG"] = msg_ptr->lightColorG;
+    root["lightColorB"] = msg_ptr->lightColorB;
+    // root["lightIntensity"] = msg_ptr->lightIntensity;
 
     // mutex.unlock();
 }
