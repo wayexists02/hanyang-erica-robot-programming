@@ -31,7 +31,7 @@ class CoDroneAlpha():
         self.drone.open()
 
         # 드론에게 정보를 받은 후 실행될 콜백 함수 등록
-        self.drone.setEventHandler(DataType.Motion, self.motion_handler)
+        # self.drone.setEventHandler(DataType.Motion, self.motion_handler)
         # self.drone.setEventHandler(DataType.Altitude, self.altitude_handler)
 
     def update_data(self):
@@ -147,6 +147,7 @@ class CoDroneAlpha():
 
         except ValueError as e:
             print("INVALID input:", e)
+            return False
 
         # 디버깅
         print("Comamnd Set:")
@@ -160,9 +161,11 @@ class CoDroneAlpha():
 
         # 드론에 명령
         self.drone.sendControlWhile(roll, pitch, yaw, throttle, 100)
-        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyRed, self.lightColorR)
-        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyGreen, self.lightColorG)
-        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyBlue, self.lightColorB)
+        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyRed.value, self.lightColorR)
+        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyGreen.value, self.lightColorG)
+        self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyBlue.value, self.lightColorB)
+
+        return True
 
     def motion_handler(self, motion):
         '''

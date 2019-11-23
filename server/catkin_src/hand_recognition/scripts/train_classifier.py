@@ -13,8 +13,8 @@ def main():
     train_loader = DataLoader(train=True, noise=True, flip=True, batch_size=BATCH_SIZE)
     valid_loader = DataLoader(train=False, noise=False, flip=False, batch_size=BATCH_SIZE)
 
-    model = ClassifierVGG().cuda()
-    # model.load(CLF_CKPT_PATH)
+    model = ClassifierVGG(NOTHING_CAT).cuda()
+    model.load(CLF_CKPT_PATH)
 
     criterion = nn.NLLLoss()
     optimizer = optim.Adam(model.parameters(), lr=ETA, weight_decay=1e-1)

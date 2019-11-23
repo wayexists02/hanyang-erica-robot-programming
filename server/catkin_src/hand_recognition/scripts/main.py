@@ -1,30 +1,37 @@
 #!/usr/bin/env python
 
-from models.classifier import Classifier
+from models.classifierVGG import ClassifierVGG
 from image_subscriber import ImageSubscriber
+from sign_publisher import SignPublisher
 from hand_gesture import HandGestureRecognizer
+from env import *
 import rospy
 
 
 def main():
     rospy.init_node("hand_gesture_node", anonymous=False)
 
-    model = Classifier().cuda()
-    model.eval()
-
-    img_subs = ImageSubscriber()
+    img_sub = ImageSubscriber()
+    sign_pub = SignPublisher()
     model = HandGestureRecognizer()
 
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(0.5)
+
+    rospy.loginfo("Hand recognizer started!")
 
     while not rospy.is_shutdown():
-        img = img_subs.wait_for_image()
+        if sign_pub.ready is False:
+            continue
+
+        img = img_sub.wait_for_image()
         if img is None:
             continue
 
-        prediction = model(img)
+        pred = model(img)
+        rospy.loginfo("Prediction: {}".format(pred))
 
-        rospy.loginfo("Prediction: {}".format(prediction))
+        # sign_pub.send_command(int(pred))
+        sign_pub.send_action_command(int(pred))
 
         rate.sleep()
 

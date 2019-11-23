@@ -37,20 +37,20 @@ def main(argv):
         # print("MSG: {}".format(msg))
 
         # 코드론의 정보를 받아옴
-        codrone.update_data()
-        data = codrone.get_data()
+        # codrone.update_data()
+        # data = codrone.get_data()
 
-        if data is None:
-            continue
+        # if data is None:
+        #     continue
 
-        # 데이터의 길이를 8바이트 문자열로 생성
-        buf = "%8d" % len(data)
+        # # 데이터의 길이를 8바이트 문자열로 생성
+        # buf = "%8d" % len(data)
 
-        # 데이터의 길이를 먼저 전송
-        os.write(out_fd, buf.encode("utf-8"))
+        # # 데이터의 길이를 먼저 전송
+        # os.write(out_fd, buf.encode("utf-8"))
 
-        # 데이터 전송
-        os.write(out_fd, data.encode("utf-8"))
+        # # 데이터 전송
+        # os.write(out_fd, data.encode("utf-8"))
         
         # 명령 길이 정보 받기
         len_of_cmd = int(os.read(in_fd, 8).decode("utf-8"))
@@ -58,7 +58,12 @@ def main(argv):
         # 명령 받기
         cmd = os.read(in_fd, len_of_cmd).decode("utf-8")
 
-        codrone.send_command(cmd)
+        res = codrone.send_command(cmd)
+
+        if res is True:
+            os.write(out_fd, "true".encode("utf-8"))
+        else:
+            os.write(out_fd, "false".encode("utf-8"))
 
     os.close(in_fd)
     os.close(out_fd)

@@ -4,9 +4,6 @@ import torch.nn as nn
 from torchvision.models import vgg11_bn
 from env import *
 
-# CAT = SIGN_CAT
-CAT = NOTHING_CAT
-
 
 class ClassifierVGG(nn.Module):
 

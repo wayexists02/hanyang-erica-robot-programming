@@ -3,7 +3,7 @@ import numpy as np
 import os
 import signal
 
-CAM_INDEX = 1
+CAM_INDEX = 0
 on = True
 
 NOTHING = "n"

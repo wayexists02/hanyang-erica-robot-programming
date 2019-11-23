@@ -10,7 +10,7 @@ class PiCamera():
 
     def __init__(self):
         self.camera = picamera.PiCamera()
-        self.camera.open()
+        self.camera.resolution = (128, 128)
         self.camera.start_preview()
 
         rospy.loginfo("PiCamera was opened.")
@@ -18,12 +18,11 @@ class PiCamera():
 
     def __del__(self):
         self.camera.stop_preview()
-        self.camera.close()
 
     def capture(self):
         stream = io.BytesIO()
 
-        self.camera.capture(stream, format="jpeg", resize=(224, 224))
+        self.camera.capture(stream, format="jpeg")
         stream.seek(0)
         return stream
 

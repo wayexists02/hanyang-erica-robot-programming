@@ -4,7 +4,6 @@ import rospy
 from pi_camera import PiCamera
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-from PIL import Image
 import numpy as np
 import cv2
 import io
@@ -14,17 +13,14 @@ class ImagePublisher():
 
     def __init__(self):
         self.pi_camera = PiCamera()
-        self.publisher = rospy.Publisher("/codrone_camera", Image, queue_size=10)
+        self.publisher = rospy.Publisher("/codrone_camera", Image, queue_size=None)
         self.bridge = CvBridge()
-        self.pi_camera.open()
-
-    def __del__(self):
-        self.pi_camera.close()
 
     def get_cv_image(self):
         stream = self.pi_camera.capture()
         data = np.fromstring(stream.getvalue(), dtype=np.uint8)
         cv_image = cv2.imdecode(data, 1)
+        cv_image = cv_image[::-1, ::-1]
 
         return cv_image
 

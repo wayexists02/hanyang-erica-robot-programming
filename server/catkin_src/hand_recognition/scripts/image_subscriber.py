@@ -9,27 +9,24 @@ from env import *
 class ImageSubscriber():
 
     def __init__(self):
-        self.image_subs = rospy.Subscriber("/image_in", Image, callback=self._callback, queue_size=None)
+        self.image_subs = rospy.Subscriber("image", Image, callback=self._callback, queue_size=None)
         self.cvbridge = CvBridge()
-        self.img_buf = []
+        self.img_buf = None
 
     def wait_for_image(self):
-        if len(self.img_buf) == 0:
+        if self.img_buf is None:
             return None
 
-        img = self.img_buf.pop(0)
-        img = img[64:160, 64:160]
+        img = self.img_buf
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, dsize=(HEIGHT, WIDTH))
-        img = (img - 128) / 128
+        img = (img.astype(np.float32) - 128) / 256
+
+        self.img_buf = None
+
         return img
 
     def _callback(self, msg):
         cv_img = self.cvbridge.imgmsg_to_cv2(msg)
-        cv_img = cv2.resize(cv_img, dsize=(HEIGHT, WIDTH))
-        img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
-        
-        while len(self.img_buf) > 10:
-            self.img_buf.pop(0)
-
-        self.img_buf.append(cv_img)
+        self.img_buf = cv_img
 

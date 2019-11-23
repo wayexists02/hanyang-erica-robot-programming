@@ -24,5 +24,5 @@ SIGN_CAT = [
     "5"
 ]
 
-SIGN_CLF_CKPT_PATH = "./ckpts/sign_clf.pth"
-NOTHING_CLF_CKPT_PATH = "./ckpts/nothing_clf.pth"
+SIGN_CLF_CKPT_PATH = "/home/jylee/catkin_ws/src/hand_recognition/scripts/ckpts/sign_clf.pth"
+NOTHING_CLF_CKPT_PATH = "/home/jylee/catkin_ws/src/hand_recognition/scripts/ckpts/nothing_clf.pth"

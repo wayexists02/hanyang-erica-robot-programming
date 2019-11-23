@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <launch>
 
-  	<node pkg="tensorflow_object_detector"
+  	<!-- <node pkg="tensorflow_object_detector"
 			type="tensorflow_object_detector"
 			name="tensorflow_object_detector"
 			output="screen"
-			launch-prefix=""> <!-- use "gdb \-\-args" for debugging with gdb -->
+			launch-prefix="">
 		<param name="graph_path" value="$(find tensorflow_object_detector)/config/ssd_mobilenet_v1_coco.pb"/> 
 		<param name="labels_path" value="$(find tensorflow_object_detector)/config/mscoco_labels.txt"/>
 		<param name="score_threshold" value="0.3"/> 
@@ -13,10 +13,15 @@
 	
 		<remap from="image_in" to="/image_in"/>
 		<remap from="image_out" to="/image_out"/>
-	</node>
+	</node> -->
 
 	<node pkg="image_view" type="image_view" name="viewer">
-		<remap from="image" to="/image_out"/>
+		<remap from="image" to="/image_in"/>
+	</node>
+
+	<node pkg="hand_recognition" type="main.py" name="hand_gesture_node" output="screen">
+		<remap from="image" to="/image_in"/>
+		<remap from="sign_cmd" to="/codrone_cmd"/>
 	</node>
     
     <!-- <node name="korean_ocr_node" pkg="korean_ocr" type="korean_ocr_node.py" output="screen"/> -->

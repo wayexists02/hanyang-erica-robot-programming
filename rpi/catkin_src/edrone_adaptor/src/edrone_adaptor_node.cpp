@@ -24,9 +24,10 @@ int main(int argc, char* argv[])
     // 드론 어댑터 객체 생성 후 초기화
     drone_adaptor = new EdroneAdaptor(&nh);
     drone_adaptor->createAdaptor();
+    drone_adaptor->startActionServer();
 
-    // 10 FPS 로 실행
-    ros::Rate rate(10);
+    // 1 FPS 로 실행
+    ros::Rate rate(1);
 
     std::string data;
 
@@ -34,14 +35,14 @@ int main(int argc, char* argv[])
         // TEST
         // drone_adaptor.test();
 
-        // 데이터를 드론으로부터 받아옴
-        data = drone_adaptor->getDataFromDrone();
-        if (data == "") continue;
+        // // 데이터를 드론으로부터 받아옴
+        // data = drone_adaptor->getDataFromDrone();
+        // if (data == "") continue;
         
-        // 데이터를 ROS 토픽으로 포워딩
-        drone_adaptor->forward(data);
+        // // 데이터를 ROS 토픽으로 포워딩
+        // drone_adaptor->forward(data);
 
-        drone_adaptor->sendCmd();
+        // drone_adaptor->sendCmd();
 
         rate.sleep();
         ros::spinOnce();
