@@ -9,7 +9,7 @@ def main():
 
     img_pub = ImagePublisher()
 
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(5)
 
     while not rospy.is_shutdown():
         cv_image = img_pub.get_cv_image()

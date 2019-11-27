@@ -4,13 +4,13 @@ import torch.nn as nn
 from torchvision.models import vgg11_bn
 from env import *
 
-CAT = NOTHING_CAT
+# CAT = NOTHING_CAT
 # CAT = SIGN_CAT
 
 
 class Classifier(nn.Module):
 
-    def __init__(self):
+    def __init__(self, cat):
         super(Classifier, self).__init__()
 
         self.features1 = nn.Sequential(
@@ -65,12 +65,29 @@ class Classifier(nn.Module):
             nn.MaxPool2d((2, 2), stride=2, padding=0), # 8
         )
 
-        self.classifier = nn.Sequential(
-            nn.Linear(8*8*32, 64),
-            nn.Tanh(),
-            nn.Dropout(0.4),
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose2d(32, 16, (5, 5), stride=2, padding=2, output_padding=1),
+            nn.BatchNorm2d(16),
+            nn.LeakyReLU(),
 
-            nn.Linear(64, len(CAT)),
+            nn.ConvTranspose2d(16, 8, (5, 5), stride=2, padding=2, output_padding=1),
+            nn.BatchNorm2d(8),
+            nn.LeakyReLU(),
+
+            nn.ConvTranspose2d(8, 4, (5, 5), stride=2, padding=2, output_padding=1),
+            nn.BatchNorm2d(4),
+            nn.LeakyReLU(),
+
+            nn.ConvTranspose2d(4, 3, (5, 5), stride=2, padding=2, output_padding=1),
+            nn.Tanh()
+        )
+
+        self.classifier = nn.Sequential(
+            nn.Linear(8*8*32, 16),
+            nn.LeakyReLU(),
+            nn.Dropout(0.5),
+
+            nn.Linear(16, len(cat)),
             nn.LogSoftmax(dim=1)
         )
 
@@ -80,11 +97,12 @@ class Classifier(nn.Module):
         x2 = self.features2(x)
 
         x = torch.cat([x1, x2], dim=1)
+        x_rec = self.decoder(x)
+
         x = x.view(x.size(0), -1)
+        logps = self.classifier(x)
 
-        x = self.classifier(x)
-
-        return x
+        return logps, x_rec
 
     def save(self, path, top_valid_acc):
         state_dict = {

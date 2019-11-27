@@ -15,7 +15,7 @@ def main():
     sign_pub = SignPublisher()
     model = HandGestureRecognizer()
 
-    rate = rospy.Rate(0.5)
+    rate = rospy.Rate(5)
 
     rospy.loginfo("Hand recognizer started!")
 
@@ -29,8 +29,7 @@ def main():
 
         pred = model(img)
         rospy.loginfo("Prediction: {}".format(pred))
-
-        # sign_pub.send_command(int(pred))
+        
         sign_pub.send_action_command(int(pred))
 
         rate.sleep()

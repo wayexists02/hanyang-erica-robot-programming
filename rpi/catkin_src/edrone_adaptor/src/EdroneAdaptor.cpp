@@ -178,14 +178,10 @@ void EdroneAdaptor::handleCmdAction(const drone_message::DroneCommandGoalConstPt
     if (cmd_act_serv.isPreemptRequested() || !ros::ok()) {
         cmd_act_serv.setPreempted();
     }
-    else if (getFeedback()) {
-        drone_message::DroneCommandResult result;
-        result.result = true;
-        cmd_act_serv.setSucceeded(result);
-    }
-    else {
-        cmd_act_serv.setPreempted();
-    }
+
+    drone_message::DroneCommandResult result;
+    result.result = true;
+    cmd_act_serv.setSucceeded(result);
 }
 
 bool EdroneAdaptor::getFeedback()

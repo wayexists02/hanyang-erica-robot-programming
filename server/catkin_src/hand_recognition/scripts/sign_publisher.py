@@ -14,6 +14,10 @@ class SignPublisher():
         self.roll = 0
         self.yaw = 0
 
+        self.act = None
+
+        self.current_direction = []
+
         self.sign_action_clnt.wait_for_server()
 
     def send_action_command(self, pred):
@@ -22,74 +26,66 @@ class SignPublisher():
 
         self.ready = False
 
-        act = DroneCommandGoal()
+        self.act = DroneCommandGoal()
+
+        takeoff_cmd = False
         
         if pred == 0:
-            act.takeOff = "false"
-            act.lightColorR = "255"
-            act.lightColorG = "0"
-            act.lightColorB = "0"
+            self.act.takeOff = "false"
+            self.act.lightColorR = "255"
+            self.act.lightColorG = "0"
+            self.act.lightColorB = "0"
+            takeoff_cmd = True
         elif pred == 1:
-            act.takeOff = "true"
-            act.lightColorR = "255"
-            act.lightColorG = "0"
-            act.lightColorB = "0"
-        elif pred == 2 and self.pitch < 30:
-            act.pitch = "30"
-            self.pitch += 30
-        elif pred == 3 and self.pitch > -30:
-            act.pitch = "-30"
-            self.pitch -= 30
+            self.act.takeOff = "true"
+            self.act.lightColorR = "255"
+            self.act.lightColorG = "0"
+            self.act.lightColorB = "0"
+            takeoff_cmd = True
+        elif pred == 2 and not "forward" in self.current_direction:
+            self._clear_direction_queue()
+            self.current_direction.append("forward")
+        elif pred == 3 and not "backward" in self.current_direction:
+            self._clear_direction_queue()
+            self.current_direction.append("backward")
+        elif pred == 4 and not "yaw" in self.current_direction:
+            self._clear_direction_queue()
+            self.current_direction.append("yaw")
+        elif pred == 5:
+            self._clear_direction_queue()
 
-        self.sign_action_clnt.send_goal(act, self.action_done)
+        if takeoff_cmd is False:
+            if "forward" in self.current_direction:
+                self.act.pitch = "30"
+            elif "backward" in self.current_direction:
+                self.act.pitch = "-30"
+            else:
+                self.act.pitch = "0"
+
+            if "yaw" in self.current_direction:
+                self.act.yaw = "30"
+            else:
+                self.act.yaw = "0"
+
+        self.act.lightColorR = "255"
+        self.act.lightColorG = "0"
+        self.act.lightColorB = "0"
+
+        self.sign_action_clnt.send_goal(self.act, self.action_done)
 
     def action_done(self, state, result):
         rospy.loginfo("Action state: {}".format(state))
         rospy.loginfo("Result: {}".format(result))
 
-        act = DroneCommandGoal()
-        act.lightColorR = "0"
-        act.lightColorG = "255"
-        act.lightColorB = "0"
-        self.sign_action_clnt.send_goal(act)
+        self.act.lightColorR = "0"
+        self.act.lightColorG = "255"
+        self.act.lightColorB = "0"
+        self.sign_action_clnt.send_goal(self.act)
+
+        del self.act
 
         self.ready = True
 
-    # def send_command(self, pred):
-    #     if self.ready is False:
-    #         return
-
-    #     self.ready = False
-
-    #     # print(type(pred), pred)
-
-    #     cmd = DroneCommand()
-        
-    #     if pred == 0:
-    #         cmd.takeOff = "false"
-    #         cmd.lightColorR = "255"
-    #         cmd.lightColorG = "0"
-    #         cmd.lightColorB = "0"
-    #     elif pred == 1:
-    #         cmd.takeOff = "true"
-    #         cmd.lightColorR = "255"
-    #         cmd.lightColorG = "0"
-    #         cmd.lightColorB = "0"
-    #     elif pred == 2 and self.pitch != "30":
-    #         cmd.pitch = "30"
-    #         self.pitch = "30"
-    #     elif pred == 3 and self.pitch != "-30":
-    #         cmd.pitch = "-30"
-    #         self.pitch = "-30"
-
-    #     self.sign_pub.publish(cmd)
-    #     rospy.Timer(rospy.Duration(2), self.timer, oneshot=True)
-
-    # def timer(self, e):
-    #     cmd = DroneCommand()
-    #     cmd.lightColorR = "0"
-    #     cmd.lightColorG = "255"
-    #     cmd.lightColorB = "0"
-
-    #     self.sign_pub.publish(cmd)
-    #     self.ready = True
+    def _clear_direction_queue(self):
+        while len(self.current_direction) > 0:
+            self.current_direction.pop()

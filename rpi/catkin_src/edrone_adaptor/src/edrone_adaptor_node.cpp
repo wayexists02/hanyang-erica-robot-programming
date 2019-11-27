@@ -26,8 +26,8 @@ int main(int argc, char* argv[])
     drone_adaptor->createAdaptor();
     drone_adaptor->startActionServer();
 
-    // 1 FPS 로 실행
-    ros::Rate rate(1);
+    // 0.5 FPS 로 실행
+    ros::Rate rate(5);
 
     std::string data;
 

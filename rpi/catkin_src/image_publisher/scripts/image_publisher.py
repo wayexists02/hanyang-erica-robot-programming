@@ -17,9 +17,10 @@ class ImagePublisher():
         self.bridge = CvBridge()
 
     def get_cv_image(self):
-        stream = self.pi_camera.capture()
-        data = np.fromstring(stream.getvalue(), dtype=np.uint8)
-        cv_image = cv2.imdecode(data, 1)
+        # stream = self.pi_camera.capture()
+        # data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+        # cv_image = cv2.imdecode(data, 1)
+        cv_image = self.pi_camera.capture().reshape(128, 128, 3)
         cv_image = cv_image[::-1, ::-1]
 
         return cv_image
