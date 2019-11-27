@@ -109,8 +109,6 @@ class CoDroneAlpha():
         pitch = 0
         yaw = 0
         throttle = 0
-        # Color = LightFlagsDrone.BodyGreen.value
-        # lightIntensity = 100
 
         # 조종 정보 추출
         try:
@@ -125,18 +123,6 @@ class CoDroneAlpha():
 
             if command_set["throttle"] != "":
                 throttle = int(command_set["throttle"])
-
-            # if command_set["lightColor"] != "":
-            #     lightColor = command_set["lightColor"]
-            # if command_set["lightIntensity"] != "":
-            #     lightIntensity = int(command_set["lightIntensity"])
-
-            # if lightColor == "red":
-            #     color = LightFlagsDrone.BodyRed.value
-            # elif lightColor == "green":
-            #     color = LightFlagsDrone.BodyGreen.value
-            # elif lightColor == "blue":
-            #     color = LightFlagsDrone.BodyBlue.value
 
             if command_set["lightColorR"] != "":
                 self.lightColorR = int(command_set["lightColorR"])
@@ -157,7 +143,6 @@ class CoDroneAlpha():
         print("Yaw: {}".format(yaw))
         print("Throttle: {}".format(throttle))
         print("Light Color RGB: {} {} {}".format(command_set["lightColorR"], command_set["lightColorG"], command_set["lightColorB"]))
-        # print("Light Intensity: {}".format(command_set["lightIntensity"]))
 
         # 드론에 명령
         self.drone.sendControlWhile(roll, pitch, yaw, throttle, 100)
