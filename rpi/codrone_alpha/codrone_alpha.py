@@ -21,7 +21,6 @@ class CoDroneAlpha():
         self.lightColorG = 100
         self.lightColorB = 100
 
-
     def init(self):
         '''
         드론 객체 준비
@@ -145,10 +144,12 @@ class CoDroneAlpha():
         print("Light Color RGB: {} {} {}".format(command_set["lightColorR"], command_set["lightColorG"], command_set["lightColorB"]))
 
         # 드론에 명령
-        self.drone.sendControlWhile(roll, pitch, yaw, throttle, 100)
+        self.drone.sendControlWhile(roll, pitch, yaw, throttle, 200)
         self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyRed.value, self.lightColorR)
         self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyGreen.value, self.lightColorG)
         self.drone.sendLightManual(DeviceType.Drone, LightFlagsDrone.BodyBlue.value, self.lightColorB)
+
+        self.cmd_takeoff = False
 
         return True
 

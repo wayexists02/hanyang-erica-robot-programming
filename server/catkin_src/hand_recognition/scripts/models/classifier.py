@@ -4,9 +4,6 @@ import torch.nn as nn
 from torchvision.models import vgg11_bn
 from env import *
 
-# CAT = NOTHING_CAT
-# CAT = SIGN_CAT
-
 
 class Classifier(nn.Module):
 
@@ -14,80 +11,51 @@ class Classifier(nn.Module):
         super(Classifier, self).__init__()
 
         self.features1 = nn.Sequential(
-            nn.Conv2d(3, 16, (3, 3), stride=1, padding=1),
-            nn.BatchNorm2d(16),
+            nn.Conv2d(1, 4, (3, 3), stride=1, padding=1),
+            nn.BatchNorm2d(4),
             nn.LeakyReLU(),
 
             nn.MaxPool2d((2, 2), stride=2, padding=0), # 64
 
-            nn.Conv2d(16, 16, (3, 3), stride=1, padding=1), 
-            nn.BatchNorm2d(16),
+            nn.Conv2d(4, 8, (3, 3), stride=1, padding=1), 
+            nn.BatchNorm2d(8),
             nn.LeakyReLU(),
 
             nn.MaxPool2d((2, 2), stride=2, padding=0), # 32
 
-            nn.Conv2d(16, 16, (3, 3), stride=1, padding=1), 
-            nn.BatchNorm2d(16),
-            nn.LeakyReLU(),
-
-            nn.MaxPool2d((2, 2), stride=2, padding=0), # 16
-
-            nn.Conv2d(16, 16, (3, 3), stride=1, padding=1), 
-            nn.BatchNorm2d(16),
+            nn.Conv2d(8, 12, (3, 3), stride=2, padding=1), # 16
+            nn.BatchNorm2d(12),
             nn.LeakyReLU(),
 
             nn.MaxPool2d((2, 2), stride=2, padding=0), # 8
         )
 
         self.features2 = nn.Sequential(
-            nn.Conv2d(3, 16, (7, 7), stride=1, padding=3),
-            nn.BatchNorm2d(16),
+            nn.Conv2d(1, 4, (7, 7), stride=1, padding=3),
+            nn.BatchNorm2d(4),
             nn.LeakyReLU(),
 
             nn.MaxPool2d((2, 2), stride=2, padding=0), # 64
 
-            nn.Conv2d(16, 16, (7, 7), stride=1, padding=3), 
-            nn.BatchNorm2d(16),
+            nn.Conv2d(4, 8, (7, 7), stride=1, padding=3), 
+            nn.BatchNorm2d(8),
             nn.LeakyReLU(),
 
             nn.MaxPool2d((2, 2), stride=2, padding=0), # 32
 
-            nn.Conv2d(16, 16, (7, 7), stride=1, padding=3), 
-            nn.BatchNorm2d(16),
-            nn.LeakyReLU(),
-
-            nn.MaxPool2d((2, 2), stride=2, padding=0), # 16
-
-            nn.Conv2d(16, 16, (7, 7), stride=1, padding=3), 
-            nn.BatchNorm2d(16),
+            nn.Conv2d(8, 12, (7, 7), stride=2, padding=3), # 16
+            nn.BatchNorm2d(12),
             nn.LeakyReLU(),
 
             nn.MaxPool2d((2, 2), stride=2, padding=0), # 8
         )
 
-        self.decoder = nn.Sequential(
-            nn.ConvTranspose2d(32, 16, (5, 5), stride=2, padding=2, output_padding=1),
-            nn.BatchNorm2d(16),
-            nn.LeakyReLU(),
-
-            nn.ConvTranspose2d(16, 8, (5, 5), stride=2, padding=2, output_padding=1),
-            nn.BatchNorm2d(8),
-            nn.LeakyReLU(),
-
-            nn.ConvTranspose2d(8, 4, (5, 5), stride=2, padding=2, output_padding=1),
-            nn.BatchNorm2d(4),
-            nn.LeakyReLU(),
-
-            nn.ConvTranspose2d(4, 3, (5, 5), stride=2, padding=2, output_padding=1),
-            nn.Tanh()
-        )
-
         self.classifier = nn.Sequential(
-            nn.Linear(8*8*32, 16),
+            nn.Linear(8*8*24, 32),
             nn.LeakyReLU(),
             nn.Dropout(0.5),
 
-            nn.Linear(16, len(cat)),
+            nn.Linear(32, len(cat)),
             nn.LogSoftmax(dim=1)
         )
 
@@ -97,12 +65,11 @@ class Classifier(nn.Module):
         x2 = self.features2(x)
 
         x = torch.cat([x1, x2], dim=1)
-        x_rec = self.decoder(x)
-
         x = x.view(x.size(0), -1)
-        logps = self.classifier(x)
 
-        return logps, x_rec
+        x = self.classifier(x)
+
+        return x
 
     def save(self, path, top_valid_acc):
         state_dict = {

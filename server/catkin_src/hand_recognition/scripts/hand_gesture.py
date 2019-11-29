@@ -12,13 +12,15 @@ class HandGestureRecognizer():
 
     def __init__(self):
         # 손이 있는지 없는지 판단하는 classifier 생성 및 로드
-        self.det = ClassifierVGG(NOTHING_CAT).cuda()
-        self.det.load(NOTHING_CLF_CKPT_PATH)
+        # self.det = ClassifierVGG(NOTHING_CAT).cuda()
+        # self.det.load(NOTHING_CLF_CKPT_PATH)
+        self.det = torch.load(NOTHING_CLF_CKPT_PATH)["model"]
         self.det.eval()
 
         # 손이 있다면, 몇 개의 손가락이 있는지 분류하는 classifier 생성 및 로드
-        self.clf = ClassifierVGG(SIGN_CAT).cuda()
-        self.clf.load(SIGN_CLF_CKPT_PATH)
+        # self.clf = ClassifierVGG(SIGN_CAT).cuda()
+        # self.clf.load(SIGN_CLF_CKPT_PATH)
+        self.clf = torch.load(SIGN_CLF_CKPT_PATH)["model"]
         self.clf.eval()
 
     def __call__(self, img):

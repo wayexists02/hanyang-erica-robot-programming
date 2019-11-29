@@ -14,58 +14,58 @@ class SignPublisher():
         self.roll = 0
         self.yaw = 0
 
-        self.act = None
+        self.act = DroneCommandGoal()
 
-        self.current_direction = []
-
+        self.current_direction = None
         self.sign_action_clnt.wait_for_server()
 
     def send_action_command(self, pred):
+
         if self.ready is False:
             return
 
         self.ready = False
 
-        self.act = DroneCommandGoal()
-
-        takeoff_cmd = False
+        self.act.takeOff = ""
         
         if pred == 0:
             self.act.takeOff = "false"
-            self.act.lightColorR = "255"
-            self.act.lightColorG = "0"
-            self.act.lightColorB = "0"
-            takeoff_cmd = True
+            self.current_direction = None
         elif pred == 1:
             self.act.takeOff = "true"
-            self.act.lightColorR = "255"
-            self.act.lightColorG = "0"
-            self.act.lightColorB = "0"
-            takeoff_cmd = True
-        elif pred == 2 and not "forward" in self.current_direction:
-            self._clear_direction_queue()
-            self.current_direction.append("forward")
-        elif pred == 3 and not "backward" in self.current_direction:
-            self._clear_direction_queue()
-            self.current_direction.append("backward")
-        elif pred == 4 and not "yaw" in self.current_direction:
-            self._clear_direction_queue()
-            self.current_direction.append("yaw")
+            self.current_direction = None
+        elif pred == 2:
+            self.current_direction = "forward"
+        elif pred == 3:
+            self.current_direction = "backward"
+        elif pred == 4:
+            self.current_direction = "yaw"
         elif pred == 5:
-            self._clear_direction_queue()
+            self.current_direction = None
+        else:
+            pass
 
-        if takeoff_cmd is False:
-            if "forward" in self.current_direction:
-                self.act.pitch = "30"
-            elif "backward" in self.current_direction:
-                self.act.pitch = "-30"
+        if self.current_direction is None:
+            self.act.pitch = "0"
+            self.act.yaw = "0"
+            self.act.roll = "0"
+        else:
+            if self.current_direction == "forward":
+                self.act.pitch = "10"
+                self.act.roll = "0"
+                self.act.yaw = "0"
+            elif self.current_direction == "backward":
+                self.act.pitch = "-10"
+                self.act.roll = "0"
+                self.act.yaw = "0"
+            elif self.current_direction == "yaw":
+                self.act.pitch = "0"
+                self.act.roll = "0"
+                self.act.yaw = "-5"
             else:
                 self.act.pitch = "0"
-
-            if "yaw" in self.current_direction:
-                self.act.yaw = "30"
-            else:
                 self.act.yaw = "0"
+                self.act.roll = "0"
 
         self.act.lightColorR = "255"
         self.act.lightColorG = "0"
@@ -77,15 +77,10 @@ class SignPublisher():
         rospy.loginfo("Action state: {}".format(state))
         rospy.loginfo("Result: {}".format(result))
 
+        self.act.takeOff = ""
         self.act.lightColorR = "0"
         self.act.lightColorG = "255"
         self.act.lightColorB = "0"
         self.sign_action_clnt.send_goal(self.act)
 
-        del self.act
-
         self.ready = True
-
-    def _clear_direction_queue(self):
-        while len(self.current_direction) > 0:
-            self.current_direction.pop()

@@ -5,10 +5,11 @@ from models.classifier import Classifier
 from models.dataloader import DataLoader
 from env import *
 
-CAT = SIGN_CAT
-# CAT = NOTHING_CAT
-# CLF_CKPT_PATH = NOTHING_CLF_CKPT_PATH
-CLF_CKPT_PATH = SIGN_CLF_CKPT_PATH
+CAT = NOTHING_CAT
+CLF_CKPT_PATH = NOTHING_CLF_CKPT_PATH
+
+# CAT = SIGN_CAT
+# CLF_CKPT_PATH = SIGN_CLF_CKPT_PATH
 
 def save(model, top_valid_acc):
     model_dict = {
@@ -31,14 +32,14 @@ def main():
     train_loader = DataLoader(train=True, noise=True, flip=True, batch_size=BATCH_SIZE)
     valid_loader = DataLoader(train=False, noise=False, flip=False, batch_size=BATCH_SIZE)
 
-    model, top_valid_acc = load()
-    # model = Classifier(CAT).cuda()
+    # model, top_valid_acc = load()
+    model = Classifier(CAT).cuda()
     # model.load(CLF_CKPT_PATH)
 
     criterion = nn.NLLLoss()
     optimizer = optim.Adam(model.parameters(), lr=ETA, weight_decay=1e-4)
 
-    # top_valid_acc = 0.0
+    top_valid_acc = 0.0
 
     for e in range(EPOCHS):
         train_loss = 0.0
@@ -50,8 +51,8 @@ def main():
             x = torch.FloatTensor(x).cuda()
             y = torch.LongTensor(y).cuda()
 
-            logps, rec = model(x)
-            loss = criterion(logps, y) + 0.5*torch.mean((rec - x)**2)
+            logps = model(x)
+            loss = criterion(logps, y)
             
             with torch.no_grad():
                 ps = torch.exp(logps)
@@ -72,8 +73,8 @@ def main():
                 x = torch.FloatTensor(x).cuda()
                 y = torch.LongTensor(y).cuda()
 
-                logps, rec = model(x)
-                loss = criterion(logps, y) + 0.5*torch.mean((rec - x)**2)
+                logps = model(x)
+                loss = criterion(logps, y)
 
                 ps = torch.exp(logps)
                 ps_k, top_k = ps.topk(1, dim=1)
