@@ -15,7 +15,7 @@ def main():
     clf = ClassifierVGG(SIGN_CAT).cuda()
     clf.load(SIGN_CLF_CKPT_PATH)
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 
     _input = None
 

@@ -11,7 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   drone_message
-  actionlib
 )
 
 ## System dependencies are found with CMake's conventions

@@ -151,8 +151,6 @@ class CoDroneAlpha():
 
         self.cmd_takeoff = False
 
-        return True
-
     def motion_handler(self, motion):
         '''
         드론으로부터 모션 정보를 받으면 자동으로 실행되는 콜백 함수

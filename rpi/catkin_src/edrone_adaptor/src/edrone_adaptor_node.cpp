@@ -24,7 +24,6 @@ int main(int argc, char* argv[])
     // 드론 어댑터 객체 생성 후 초기화
     drone_adaptor = new EdroneAdaptor(&nh);
     drone_adaptor->createAdaptor();
-    drone_adaptor->startActionServer();
 
     // 0.5 FPS 로 실행
     ros::Rate rate(5);

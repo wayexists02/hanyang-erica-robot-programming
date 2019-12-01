@@ -9,7 +9,7 @@ import rospy
 
 
 def main():
-    rospy.init_node("hand_gesture_node", anonymous=False)
+    rospy.init_node("hand_gesture_node", anonymous=True)
 
     img_sub = ImageSubscriber()
     sign_pub = SignPublisher()
@@ -20,17 +20,15 @@ def main():
     rospy.loginfo("Hand recognizer started!")
 
     while not rospy.is_shutdown():
-        if sign_pub.ready is False:
-            continue
-
         img = img_sub.wait_for_image()
         if img is None:
             continue
 
         pred = model(img)
         rospy.loginfo("Prediction: {}".format(pred))
-        
-        sign_pub.send_action_command(int(pred))
+
+        # sign_pub.send_command(int(pred))
+        sign_pub.send_command(int(pred))
 
         rate.sleep()
 

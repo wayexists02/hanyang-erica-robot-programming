@@ -10,17 +10,16 @@
 #include <jsoncpp/json/json.h>
 
 #include "edrone_adaptor/EdroneAdaptor.hpp"
-#include "drone_message/DroneInfo.h"
 
 
 /**
  * 생성자
  */
 EdroneAdaptor::EdroneAdaptor(ros::NodeHandle* _nh)
-    : nh(_nh), flag(FLAGS::INFO), cmd_act_serv(*_nh, "codrone_cmd_action", boost::bind(&EdroneAdaptor::handleCmdAction, this, _1), false)
+    : nh(_nh), flag(FLAGS::INFO)
 {
-    info_pub = nh->advertise<drone_message::DroneInfo>("codrone_info", 0);
-    // cmd_sub = nh->subscribe("codrone_cmd", 0, &EdroneAdaptor::handleCmd, this);
+    // info_pub = nh->advertise<drone_message::DroneInfo>("codrone_info", 0);
+    cmd_sub = nh->subscribe("codrone_cmd", 0, &EdroneAdaptor::handleCmd, this);
 
     // Default 값들.
     root["takeOff"] = "false";
@@ -108,11 +107,6 @@ void EdroneAdaptor::createAdaptor()
     }
 }
 
-void EdroneAdaptor::startActionServer()
-{
-    this->cmd_act_serv.start();
-}
-
 /**
  * 테스트용
  */
@@ -140,62 +134,18 @@ void EdroneAdaptor::sendCmd()
 /**
  * 명령어를 받으면 호출되는 콜백
  */
-// void EdroneAdaptor::handleCmd(const drone_message::DroneCommand::ConstPtr& msg_ptr)
-// {
-//     // mutex.lock();
-    
-//     root["takeOff"] = msg_ptr->takeOff;
-//     root["roll"] = msg_ptr->roll;
-//     root["pitch"] = msg_ptr->pitch;
-//     root["yaw"] = msg_ptr->yaw;
-//     root["throttle"] = msg_ptr->throttle;
-//     root["lightColorR"] = msg_ptr->lightColorR;
-//     root["lightColorG"] = msg_ptr->lightColorG;
-//     root["lightColorB"] = msg_ptr->lightColorB;
-
-//     sendCmd();
-//     // root["lightIntensity"] = msg_ptr->lightIntensity;
-
-//     // mutex.unlock();
-// }
-
-/**
- * 명령어를 받으면 호출되는 콜백
- */
-void EdroneAdaptor::handleCmdAction(const drone_message::DroneCommandGoalConstPtr& act_ptr)
+void EdroneAdaptor::handleCmd(const drone_message::DroneCommand::ConstPtr& msg_ptr)
 {
-    root["takeOff"] = act_ptr->takeOff;
-    root["roll"] = act_ptr->roll;
-    root["pitch"] = act_ptr->pitch;
-    root["yaw"] = act_ptr->yaw;
-    root["throttle"] = act_ptr->throttle;
-    root["lightColorR"] = act_ptr->lightColorR;
-    root["lightColorG"] = act_ptr->lightColorG;
-    root["lightColorB"] = act_ptr->lightColorB;
+    root["takeOff"] = msg_ptr->takeOff;
+    root["roll"] = msg_ptr->roll;
+    root["pitch"] = msg_ptr->pitch;
+    root["yaw"] = msg_ptr->yaw;
+    root["throttle"] = msg_ptr->throttle;
+    root["lightColorR"] = msg_ptr->lightColorR;
+    root["lightColorG"] = msg_ptr->lightColorG;
+    root["lightColorB"] = msg_ptr->lightColorB;
 
     sendCmd();
-    
-    if (cmd_act_serv.isPreemptRequested() || !ros::ok()) {
-        cmd_act_serv.setPreempted();
-    }
-
-    drone_message::DroneCommandResult result;
-    result.result = true;
-    cmd_act_serv.setSucceeded(result);
-}
-
-bool EdroneAdaptor::getFeedback()
-{
-    char buf[8] = {0,};
-    if (read(this->in_fd, buf, 7) < 0) {
-        ROS_ERROR("Some error occurs in EDRONE!");
-        return false;
-    }
-    
-    if (strcmp(buf, "true"))
-        return true;
-    else
-        return false;
 }
 
 /**
@@ -204,22 +154,22 @@ bool EdroneAdaptor::getFeedback()
  * Returns:
  * @data        json 문자열
  */
-std::string EdroneAdaptor::getDataFromDrone()
-{
-    if (this->flag == FLAGS::CMD) return std::string("");
+// std::string EdroneAdaptor::getDataFromDrone()
+// {
+//     if (this->flag == FLAGS::CMD) return std::string("");
 
-    // 일단 json 데이터의 길이를 받아옴
-    char len_of_data[8] = {0,};
-    read(this->in_fd, len_of_data, 8);
+//     // 일단 json 데이터의 길이를 받아옴
+//     char len_of_data[8] = {0,};
+//     read(this->in_fd, len_of_data, 8);
 
-    // 데이터를 받아옴
-    char buf[256] = {0,};
-    read(this->in_fd, buf, atoi(len_of_data));
+//     // 데이터를 받아옴
+//     char buf[256] = {0,};
+//     read(this->in_fd, buf, atoi(len_of_data));
 
-    std::string data(buf);
+//     std::string data(buf);
 
-    return data;
-}
+//     return data;
+// }
 
 /**
  * 데이터를 메시지로 만들어서 그대로 포워딩
@@ -227,37 +177,37 @@ std::string EdroneAdaptor::getDataFromDrone()
  * Parameters
  * @data    데이터 문자열(json 형태)
  */
-void EdroneAdaptor::forward(std::string& data)
-{
-    // 메시지 객체 1번만 생성 후 재활용
-    static drone_message::DroneInfo msg;
-    static Json::Value info_value;
+// void EdroneAdaptor::forward(std::string& data)
+// {
+//     // 메시지 객체 1번만 생성 후 재활용
+//     static drone_message::DroneInfo msg;
+//     static Json::Value info_value;
 
-    // 메시지 객체에 데이터 채우기
-    this->reader.parse(data, info_value);
+//     // 메시지 객체에 데이터 채우기
+//     this->reader.parse(data, info_value);
 
-    msg.accel.resize(3);
-    msg.accel[0] = info_value["accelX"].asInt();
-    msg.accel[1] = info_value["accelY"].asInt();
-    msg.accel[2] = info_value["accelZ"].asInt();
+//     msg.accel.resize(3);
+//     msg.accel[0] = info_value["accelX"].asInt();
+//     msg.accel[1] = info_value["accelY"].asInt();
+//     msg.accel[2] = info_value["accelZ"].asInt();
 
-    msg.gyro.resize(3);
-    msg.gyro[0] = info_value["gyroRoll"].asInt();
-    msg.gyro[1] = info_value["gyroPitch"].asInt();
-    msg.gyro[2] = info_value["gyroYaw"].asInt();
+//     msg.gyro.resize(3);
+//     msg.gyro[0] = info_value["gyroRoll"].asInt();
+//     msg.gyro[1] = info_value["gyroPitch"].asInt();
+//     msg.gyro[2] = info_value["gyroYaw"].asInt();
 
-    msg.angle.resize(3);
-    msg.angle[0] = info_value["angleRoll"].asInt();
-    msg.angle[1] = info_value["anglePitch"].asInt();
-    msg.angle[2] = info_value["angleYaw"].asInt();
+//     msg.angle.resize(3);
+//     msg.angle[0] = info_value["angleRoll"].asInt();
+//     msg.angle[1] = info_value["anglePitch"].asInt();
+//     msg.angle[2] = info_value["angleYaw"].asInt();
 
-    // 메시지 퍼블리싱
-    info_pub.publish(msg);
+//     // 메시지 퍼블리싱
+//     info_pub.publish(msg);
 
-    // 메시지 데이터 클리어
-    msg.accel.clear();
-    msg.gyro.clear();
-    msg.angle.clear();
+//     // 메시지 데이터 클리어
+//     msg.accel.clear();
+//     msg.gyro.clear();
+//     msg.angle.clear();
 
-    this->flag = FLAGS::CMD;
-}
+//     this->flag = FLAGS::CMD;
+// }

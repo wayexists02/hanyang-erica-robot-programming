@@ -35,6 +35,9 @@ class DataLoader():
         self.batch_size = batch_size
         self.num_batches = int(np.ceil(self.n / self.batch_size))
 
+        self.min_lim = (0, 10, 10)
+        self.max_lim = (45, 240, 255)
+
     def __len__(self):
         return self.num_batches
 

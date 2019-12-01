@@ -4,10 +4,13 @@ import torch.nn as nn
 from torchvision.models import vgg11_bn
 from env import *
 
+CAT = NOTHING_CAT
+# CAT = SIGN_CAT
+
 
 class Classifier(nn.Module):
 
-    def __init__(self, cat):
+    def __init__(self):
         super(Classifier, self).__init__()
 
         self.features1 = nn.Sequential(
@@ -55,7 +58,7 @@ class Classifier(nn.Module):
             nn.LeakyReLU(),
             nn.Dropout(0.5),
 
-            nn.Linear(32, len(cat)),
+            nn.Linear(32, len(CAT)),
             nn.LogSoftmax(dim=1)
         )
 

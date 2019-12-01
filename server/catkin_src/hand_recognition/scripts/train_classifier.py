@@ -1,43 +1,23 @@
 import torch
 from torch import nn, optim
-from models.classifier import Classifier
+from models.classifierVGG import ClassifierVGG
 # from models.classifier import Classifier
 from models.dataloader import DataLoader
 from env import *
 
-CAT = NOTHING_CAT
-CLF_CKPT_PATH = NOTHING_CLF_CKPT_PATH
 
-# CAT = SIGN_CAT
+CLF_CKPT_PATH = NOTHING_CLF_CKPT_PATH
 # CLF_CKPT_PATH = SIGN_CLF_CKPT_PATH
 
-def save(model, top_valid_acc):
-    model_dict = {
-        "model": model,
-        "top_valid_acc": top_valid_acc
-    }
-    torch.save(model_dict, CLF_CKPT_PATH)
-    print("Model was saved.")
-
-def load():
-    model_dict = torch.load(CLF_CKPT_PATH)
-    model = model_dict["model"]
-    top_valid_acc = model_dict["top_valid_acc"]
-
-    print("Model was loaded.")
-
-    return model, top_valid_acc
-
 def main():
-    train_loader = DataLoader(train=True, noise=True, flip=True, batch_size=BATCH_SIZE)
+    train_loader = DataLoader(train=True, noise=False, flip=True, batch_size=BATCH_SIZE)
     valid_loader = DataLoader(train=False, noise=False, flip=False, batch_size=BATCH_SIZE)
 
-    # model, top_valid_acc = load()
-    model = Classifier(CAT).cuda()
+    model = ClassifierVGG().cuda()
     # model.load(CLF_CKPT_PATH)
 
     criterion = nn.NLLLoss()
-    optimizer = optim.Adam(model.parameters(), lr=ETA, weight_decay=1e-4)
+    optimizer = optim.Adam(model.parameters(), lr=ETA, weight_decay=1e-2)
 
     top_valid_acc = 0.0
 
@@ -96,8 +76,7 @@ def main():
 
             if top_valid_acc <= valid_acc:
                 top_valid_acc = valid_acc
-                # model.save(CLF_CKPT_PATH, top_valid_acc)
-                save(model, top_valid_acc)
+                model.save(CLF_CKPT_PATH, top_valid_acc)
 
             model.train()
 

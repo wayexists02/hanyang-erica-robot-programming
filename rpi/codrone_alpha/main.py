@@ -58,12 +58,7 @@ def main(argv):
         # 명령 받기
         cmd = os.read(in_fd, len_of_cmd).decode("utf-8")
 
-        res = codrone.send_command(cmd)
-
-        if res is True:
-            os.write(out_fd, "true".encode("utf-8"))
-        else:
-            os.write(out_fd, "false".encode("utf-8"))
+        codrone.send_command(cmd)
 
     os.close(in_fd)
     os.close(out_fd)
