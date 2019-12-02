@@ -9,6 +9,8 @@ class ClassifierVGG(nn.Module):
 
     def __init__(self, cat):
         super(ClassifierVGG, self).__init__()
+        
+        self.cat = cat
 
         self.features = vgg11_bn(pretrained=True).features
         self.features.requires_grad_(False)

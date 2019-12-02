@@ -16,12 +16,15 @@
 	</node> -->
 
 	<node pkg="image_view" type="image_view" name="viewer">
-		<remap from="image" to="/image_in"/>
+		<remap from="image" to="image_in"/>
 	</node>
 
 	<node pkg="hand_recognition" type="main.py" name="hand_gesture_node" output="screen">
-		<remap from="image" to="/image_in"/>
-		<remap from="sign_cmd" to="/codrone_cmd"/>
+		<remap from="image" to="image_in"/>
+		<remap from="sign_cmd" to="codrone_cmd_hand"/>
+	</node>
+
+	<node pkg="codrone_alpha" type="codrone_alpha_node" name="codrone_alpha_node" output="screen">
 	</node>
     
     <!-- <node name="korean_ocr_node" pkg="korean_ocr" type="korean_ocr_node.py" output="screen"/> -->

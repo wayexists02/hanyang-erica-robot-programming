@@ -4,6 +4,7 @@
 **/vision_opencv/
 **/tensorflow_object_detector_ros/
 **/data/
+**/data_3/
 **/*.assets/
 **/.vscode/
 **/.ipynb_checkpoints/

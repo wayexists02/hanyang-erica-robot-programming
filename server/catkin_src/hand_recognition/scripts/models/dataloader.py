@@ -26,8 +26,9 @@ class DataLoader():
         self.noise = noise
         self.flip = flip
 
+        self.cat_list = self._read_data_list()
         self.data_list = []
-        for i, cat_list in enumerate(self._read_data_list()):
+        for i, cat_list in enumerate(self.cat_list):
             self.data_list.extend(list(map(lambda filename: (filename, i), cat_list)))
 
         self.n = len(self.data_list)

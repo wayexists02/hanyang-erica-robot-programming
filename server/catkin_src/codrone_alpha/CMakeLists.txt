@@ -8,10 +8,11 @@ project(codrone_alpha)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED
-    korean_ocr
-    tensorflow_object_detector
+    # korean_ocr
+    # tensorflow_object_detector
+    drone_message
     roscpp
-    sensor_msgs
+    std_msgs
     cv_bridge
 )
 
@@ -140,6 +141,11 @@ add_executable(test_node
   src/test.cpp
 )
 
+add_executable(codrone_alpha_node
+  src/codrone_alpha_node.cpp
+  src/CodroneController.cpp
+)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -154,6 +160,10 @@ add_executable(test_node
 target_link_libraries(test_node
   ${catkin_LIBRARIES}
   ${opencv_LIBRARIES}
+)
+
+target_link_libraries(codrone_alpha_node
+  ${catkin_LIBRARIES}
 )
 
 #############

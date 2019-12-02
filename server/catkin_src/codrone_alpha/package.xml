@@ -50,12 +50,10 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>cv_bridge</build_depend>
-  <exec_depend>korean_ocr</exec_depend>
-  <exec_depend>tensorflow_object_detector</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
-  <exec_depend>cv_bridge</exec_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>drone_message</build_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>drone_message</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

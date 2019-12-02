@@ -2,6 +2,7 @@ import torch
 from torch import nn, optim
 from models.classifier import Classifier
 from models.classifierVGG import ClassifierVGG
+from models.classifier_time_chain import ClassifierTimeChain
 from models.dataloader import DataLoader
 from env import *
 import cv2
@@ -11,9 +12,11 @@ import numpy as np
 def main():
     det = ClassifierVGG(NOTHING_CAT).cuda()
     det.load(NOTHING_CLF_CKPT_PATH)
+    # det = ClassifierTimeChain(dat)
 
     clf = ClassifierVGG(SIGN_CAT).cuda()
     clf.load(SIGN_CLF_CKPT_PATH)
+    # clf = ClassifierTimeChain(clf)
 
     cap = cv2.VideoCapture(0)
 
@@ -32,20 +35,23 @@ def main():
 
         rgb_frame = (rgb_frame.astype(np.float32) - 128) / 256
 
-        logps = det(torch.FloatTensor(rgb_frame).cuda())
+        tensor = torch.FloatTensor(rgb_frame).cuda()
+
+        logps = det(tensor)
         ps = torch.exp(logps)
         print(ps)
         if ps[0, 1] > 0.5:
             print("Hand detected.")
-            logps = clf(torch.FloatTensor(rgb_frame).cuda())
+            logps = clf(tensor)
             ps = torch.exp(logps)
             cat = torch.argmax(ps, dim=1)
 
             print(SIGN_CAT[cat])
 
         cv2.imshow("test", frame)
-        _input = cv2.waitKey(10)
+        _input = cv2.waitKey(100)
 
 
 if __name__ == "__main__":
-    main()
+    with torch.no_grad():
+        main()
