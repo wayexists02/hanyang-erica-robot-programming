@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from models.classifierVGG import ClassifierVGG
+# from models.classifierVGG import ClassifierVGG
 from image_subscriber import ImageSubscriber
 from sign_publisher import SignPublisher
 from hand_gesture import HandGestureRecognizer
@@ -25,7 +25,7 @@ def main():
             continue
 
         pred = model(img)
-        rospy.loginfo("Prediction: {}".format(pred))
+        # rospy.loginfo("Prediction: {}".format(pred))
 
         # sign_pub.send_command(int(pred))
         sign_pub.send_command(int(pred))
