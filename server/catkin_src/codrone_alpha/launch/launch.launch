@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <launch>
+	<param name="stop_param" type="bool" value="false"/>
 
   	<!-- <node pkg="tensorflow_object_detector"
 			type="tensorflow_object_detector"
@@ -14,10 +15,6 @@
 		<remap from="image_in" to="/image_in"/>
 		<remap from="image_out" to="/image_out"/>
 	</node> -->
-
-	<node pkg="image_view" type="image_view" name="viewer">
-		<remap from="image" to="image_in"/>
-	</node>
 
 	<node pkg="hand_recognition" type="main.py" name="hand_gesture_node" output="screen">
 		<remap from="image" to="image_in"/>

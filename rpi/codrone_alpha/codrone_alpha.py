@@ -93,6 +93,11 @@ class CoDroneAlpha():
 
         command_set = json.loads(command_set)
 
+        if command_set["stop"] == "true":
+            print("STOP!")
+            self.drone.sendStop()
+            return
+
         # take off 정보 추출
         if command_set["takeOff"] == "true" and self.on_flying is False:
             print("Take off")
@@ -132,7 +137,7 @@ class CoDroneAlpha():
 
         except ValueError as e:
             print("INVALID input:", e)
-            return False
+            return
 
         # 디버깅
         print("Comamnd Set:")

@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <launch>
+	<param name="stop_param" type="bool" value="true"/>
 
-	<node pkg="usb_cam"
-		  type="usb_cam_node"
-		  name="usb_cam"
-		  output="screen">
-		<param name="image_width" value="640"/>
-		<param name="image_height" value="480"/>
-    	<param name="pixel_format" value="yuyv" />
-		<param name="video_device" value="/dev/video0"/>
-    	<param name="io_method" value="mmap"/>
-
-		<remap from="/usb_cam/image_raw" to="image_in"/>
+	<node pkg="hand_recognition" type="main.py" name="hand_gesture_node" output="screen">
+		<remap from="image" to="image_in"/>
+		<remap from="sign_cmd" to="codrone_cmd"/>
 	</node>
-
-	<include file="$(find codrone_alpha)/launch/launch.launch"/>
 
 	<!-- <node pkg="codrone_alpha"
 		  type="test_node"

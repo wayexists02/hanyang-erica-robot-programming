@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <string>
+#include <std_msgs/Bool.h>
 #include <drone_message/DroneCommand.h>
 #include <jsoncpp/json/json.h>
 
@@ -23,23 +24,28 @@ public:
     void sendCmd();
     void test();
 
+    void resetMessage();
+
+    void handleStop(const std_msgs::Bool::ConstPtr& msg_ptr);
+
 protected:
     ros::NodeHandle* nh;
 
     ros::Publisher info_pub;
     ros::Subscriber cmd_sub;
+    ros::Subscriber stop_sub;
 
     Json::Value root;
     Json::StyledWriter writer;
     Json::Reader reader;
-
-    // std::mutex mutex;
 
     int pipefd_in[2];
     int pipefd_out[2];
     int pid;
 
     FLAGS flag;
+
+    bool stop;
 
     int in_fd;
     int out_fd;

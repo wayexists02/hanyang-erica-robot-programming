@@ -16,21 +16,13 @@
  * 생성자
  */
 EdroneAdaptor::EdroneAdaptor(ros::NodeHandle* _nh)
-    : nh(_nh), flag(FLAGS::INFO)
+    : nh(_nh), flag(FLAGS::INFO), stop(false)
 {
     // info_pub = nh->advertise<drone_message::DroneInfo>("codrone_info", 0);
     cmd_sub = nh->subscribe("cmd", 1, &EdroneAdaptor::handleCmd, this);
+    stop_sub = nh->subscribe("stop", 1, &EdroneAdaptor::handleStop, this);
 
-    // Default 값들.
-    root["takeOff"] = "false";
-    root["roll"] = "0";
-    root["pitch"] = "0";
-    root["yaw"] = "0";
-    root["throttle"] = "0";
-    root["lightColorR"] = "100";
-    root["lightColorG"] = "100";
-    root["lightColorB"] = "100";
-    // root["lightIntensity"] = "100";
+    this->resetMessage();
 }
 
 EdroneAdaptor::~EdroneAdaptor()
@@ -41,6 +33,20 @@ EdroneAdaptor::~EdroneAdaptor()
     close(this->out_fd);
     kill(this->pid, SIGINT);
     waitpid(this->pid, NULL, 0);
+}
+
+void EdroneAdaptor::resetMessage()
+{
+    // Default 값들.
+    root["takeOff"] = "false";
+    root["roll"] = "0";
+    root["pitch"] = "0";
+    root["yaw"] = "0";
+    root["throttle"] = "0";
+    root["lightColorR"] = "100";
+    root["lightColorG"] = "100";
+    root["lightColorB"] = "100";
+    root["stop"] = "false";
 }
 
 /**
@@ -119,6 +125,11 @@ void EdroneAdaptor::test()
 
 void EdroneAdaptor::sendCmd()
 {
+    if (this->stop) {
+        ROS_WARN("DRONE STOPPED!");
+        return;
+    }
+
     std::string cmd = this->writer.write(root);
 
     int len_of_data = strlen(cmd.c_str());
@@ -148,6 +159,20 @@ void EdroneAdaptor::handleCmd(const drone_message::DroneCommand::ConstPtr& msg_p
     root["lightColorB"] = msg_ptr->lightColorB;
 
     // sendCmd();
+}
+
+void EdroneAdaptor::handleStop(const std_msgs::Bool::ConstPtr& msg_ptr)
+{
+    if (msg_ptr->data == true) {
+        this->stop = true;
+        root["stop"] = "true";
+    }
+    else {
+        this->stop = false;
+        root["stop"] = "false";
+    }
+
+    this->resetMessage();
 }
 
 /**
