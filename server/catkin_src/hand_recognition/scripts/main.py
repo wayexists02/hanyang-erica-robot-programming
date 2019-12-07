@@ -15,19 +15,17 @@ def main():
     sign_pub = SignPublisher()
     model = HandGestureRecognizer()
 
-    rate = rospy.Rate(5)
+    rate = rospy.Rate(2)
 
     rospy.loginfo("Hand recognizer started!")
 
     while not rospy.is_shutdown():
         img = img_sub.wait_for_image()
         if img is None:
+            rate.sleep()
             continue
 
         pred = model(img)
-        # rospy.loginfo("Prediction: {}".format(pred))
-
-        # sign_pub.send_command(int(pred))
         sign_pub.send_command(int(pred))
 
         rate.sleep()

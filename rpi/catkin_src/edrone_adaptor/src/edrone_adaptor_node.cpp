@@ -25,23 +25,14 @@ int main(int argc, char* argv[])
     drone_adaptor = new EdroneAdaptor(&nh);
     drone_adaptor->createAdaptor();
 
-    // 0.5 FPS 로 실행
-    ros::Rate rate(5);
+    // 2 FPS 로 실행
+    ros::Rate rate(2);
 
     std::string data;
 
     while (ros::ok()) {
-        // TEST
-        // drone_adaptor.test();
 
-        // // 데이터를 드론으로부터 받아옴
-        // data = drone_adaptor->getDataFromDrone();
-        // if (data == "") continue;
-        
-        // // 데이터를 ROS 토픽으로 포워딩
-        // drone_adaptor->forward(data);
-
-        // drone_adaptor->sendCmd();
+        drone_adaptor->sendCmd();
 
         rate.sleep();
         ros::spinOnce();

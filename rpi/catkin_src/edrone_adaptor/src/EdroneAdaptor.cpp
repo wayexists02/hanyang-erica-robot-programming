@@ -19,7 +19,7 @@ EdroneAdaptor::EdroneAdaptor(ros::NodeHandle* _nh)
     : nh(_nh), flag(FLAGS::INFO)
 {
     // info_pub = nh->advertise<drone_message::DroneInfo>("codrone_info", 0);
-    cmd_sub = nh->subscribe("codrone_cmd", 0, &EdroneAdaptor::handleCmd, this);
+    cmd_sub = nh->subscribe("cmd", 1, &EdroneAdaptor::handleCmd, this);
 
     // Default 값들.
     root["takeOff"] = "false";
@@ -92,6 +92,8 @@ void EdroneAdaptor::createAdaptor()
 
         // python3 으로 e-drone 어뎁터 생성
         execlp("/usr/bin/python3", "/usr/bin/python3", exec_file, fd1, fd2, NULL);
+        ROS_ERROR("EXEC ERROR!");
+        return;
     }
     else {
         // 부모 프로세스라면, 이것을 실행함
@@ -145,7 +147,7 @@ void EdroneAdaptor::handleCmd(const drone_message::DroneCommand::ConstPtr& msg_p
     root["lightColorG"] = msg_ptr->lightColorG;
     root["lightColorB"] = msg_ptr->lightColorB;
 
-    sendCmd();
+    // sendCmd();
 }
 
 /**

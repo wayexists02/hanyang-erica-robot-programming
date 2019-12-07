@@ -3,5 +3,7 @@
     <node pkg="image_publisher" type="main.py" name="image_publisher_node" output="screen">
         <remap from="codrone_camera" to="image_in"/>
     </node>
-    <node pkg="edrone_adaptor" type="edrone_adaptor_node" name="edrone_adaptor_node" output="screen"/>
+    <node pkg="edrone_adaptor" type="edrone_adaptor_node" name="edrone_adaptor_node" output="screen">
+        <remap from="cmd" to="codrone_cmd"/>
+    </node>
 </launch>

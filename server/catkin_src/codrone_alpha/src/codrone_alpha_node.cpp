@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     while (ros::ok()) {
 
         controller.updateState();
-        controller.publish();
+        // controller.publish();
 
         rate.sleep();
         ros::spinOnce();

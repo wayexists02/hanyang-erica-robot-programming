@@ -22,21 +22,6 @@ class HandGestureRecognizer():
         img = np.transpose(img, (2, 0, 1))
         img = img.reshape(1, *img.shape)
 
-        # rospy.loginfo(img.shape)
-
-        # with torch.no_grad():
-        #     img = torch.FloatTensor(img).cuda()
-        #     logps = self.det(img)
-        #     ps = torch.exp(logps)
-        #     rospy.loginfo(ps)
-
-        #     if ps[0, 1] > 0.5:
-        #         logps = self.clf(img)
-        #         _, top_k = torch.exp(logps).topk(1, dim=1)
-        #         rospy.loginfo(SIGN_CAT[top_k])
-            
-        #         return top_k.cpu().numpy().squeeze()
-
         img = torch.FloatTensor(img).cuda()
 
         ps = self.det(img)
