@@ -164,12 +164,14 @@ void EdroneAdaptor::handleCmd(const drone_message::DroneCommand::ConstPtr& msg_p
 void EdroneAdaptor::handleStop(const std_msgs::Bool::ConstPtr& msg_ptr)
 {
     if (msg_ptr->data == true) {
-        this->stop = true;
         root["stop"] = "true";
+        this->sendCmd();
+        this->stop = true;
     }
     else {
-        this->stop = false;
         root["stop"] = "false";
+        this->sendCmd();
+        this->stop = false;
     }
 
     this->resetMessage();

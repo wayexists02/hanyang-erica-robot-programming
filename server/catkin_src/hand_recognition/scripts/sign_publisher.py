@@ -1,14 +1,14 @@
 import rospy
 import actionlib
 from drone_message.msg import DroneCommand
-from std_msgs.msg import Bool
+from std_msgs.msg import SetBool
 
 
 class SignPublisher():
 
     def __init__(self):
         self.sign_pub = rospy.Publisher("sign_cmd", DroneCommand, queue_size=1)
-        self.mission_sub = rospy.Subscriber("mission", Bool, callback=self.mission_handle, queue_size=1)
+        self.mission_sub = rospy.Service("mission", SetBool, self.mission_handle)
         self.pitch = 0
         self.roll = 0
         self.yaw = 0
@@ -19,11 +19,13 @@ class SignPublisher():
 
         self.current_direction = None
 
-    def mission_handle(self, msg):
-        if msg.data == True:
+    def mission_handle(self, req):
+        if req.data == True:
             self.on_mission = True
         else:
             self.on_mission = False
+
+        return True, ""
 
         # rospy.loginfo("ON MISSION" + str(self.on_mission))
 
