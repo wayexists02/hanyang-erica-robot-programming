@@ -1,6 +1,6 @@
 # Robot Programming
 
-김영평, 송희원, 이재영
+**팀 구성**: 김영평, 송희원, 이재영
 
 
 ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트에서는 ROBOLINK사의 Codrone이라는 드론 위에 ROS와 그 노드들을 프로그래밍하고 구동해봄으로써, ROS를 학습하고자 한다.
@@ -15,7 +15,7 @@ ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트�
 1. server/catkin_src/* 의 모든 파일을 서버의 catkin_ws/src/ 에 넣는다.
 2. rpi/ros/codrone_alpha 를 raspberry pi 의 $HOME/ 에 넣는다.
 3. rpi/ros/catkin_src/* 의 모든 파일을 raspberry pi 의 catkin_ws/src/ 에 넣는다.
-4 각각 빌드한다.
+4. 각각 빌드한다.
 
 ## Execution
 
@@ -24,11 +24,26 @@ ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트�
 3. Raspberry pi에서 ```roslaunch codrone_alpha_pi launch.launch```를 
 
 
-## CoDrone
+
+## Detail
+
+먼저, 라즈베리파이에서 이미지를 PC로 송신하는 노드가 존재한다. 이 노드로부터 서버가 이미지를 받고 다음과 같은 연산을 거친다.
+
+![image-20191214101152978](README.assets/image-20191214101152978.png)
+
+작동 구조는 현재까지 위와 같다. 전반적으로 stop 토픽이 드론의 비상 정지를 준비하면서, 어느 토픽보다 가장 높은 우선순위로 동작하게 된다. 그 다음으로, mission 서비스인데, mission 서비스가 ring detection mode, sign detection mode를 스위칭하는 멀티플랙서 역할을 수행한다. Ring detection mode에서는 전방에 링을 인식해서 그 링을 통과하도록 드론이 자동 조종되고 hand detection mode에서는 드론을 손 모양으로 조종이 가능하다. 이 두 모드가 동시에 조종명령을 보내면 예상치못한 상황이 너무 많으므로, 멀티플랙서 구조를 채택했다.
+
+두 모드에서 각각 다른 ROS node가 동작하며, 이 노드들은 라즈베리의 edrone adaptor 노드로 명령을 토픽으로 전송한다. Edrone adaptor는 말 그대로 edrone 라이브러리(python3)와 ROS 노드(C++, python2)를 연결해주는 어댑터 역할을 하며, edrone adaptor는 fork()를 이용해 자식프로세스를 생성하고 python3을 구동하고 edrone library를 호출하도록 되어 있다. 그리고, edrone adaptor와 python3는 pipe를 통해 통신하게 된다.
+
+이런 구조를 채택한 이유는, ROS가 공식적으로 python2만 지원하며, edrone library는 python3만 지원하기 때문이다. 따라서, 라이브러리를 직접 수정하던지, 다른 방법이 필요했고, 우리는 하위 프로세스를 python3으로 생성하는 방법을 생각했다.
+
+Edrone adaptor가 하는 역할 중 하나는 드론 명령에 해당하는 ROS topic(DroneCommand.msg)을 json 형태로 변환시켜서 python3 프로세스에게 전달한다. Python3 프로세스는 edrone library를 직접 이용하면서 json을 해석하고 edrone library를 통해 직접 명령을 내린다.
+
+
+
+# About CoDrone
 
 참조: https://www.robolink.com/codrone/
-
-
 
 
 
