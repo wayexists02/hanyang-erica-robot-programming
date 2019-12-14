@@ -29,7 +29,7 @@ ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트�
 
 먼저, 라즈베리파이에서 이미지를 PC로 송신하는 노드가 존재한다. 이 노드로부터 서버가 이미지를 받고 다음과 같은 연산을 거친다.
 
-![image-20191214101152978](README.assets/image-20191214101152978.png)
+![image](https://user-images.githubusercontent.com/26874750/70841270-719a8d00-1e5c-11ea-835e-c59f576dac91.png)
 
 작동 구조는 현재까지 위와 같다. 전반적으로 stop 토픽이 드론의 비상 정지를 준비하면서, 어느 토픽보다 가장 높은 우선순위로 동작하게 된다. 그 다음으로, mission 서비스인데, mission 서비스가 ring detection mode, sign detection mode를 스위칭하는 멀티플랙서 역할을 수행한다. Ring detection mode에서는 전방에 링을 인식해서 그 링을 통과하도록 드론이 자동 조종되고 hand detection mode에서는 드론을 손 모양으로 조종이 가능하다. 이 두 모드가 동시에 조종명령을 보내면 예상치못한 상황이 너무 많으므로, 멀티플랙서 구조를 채택했다.
 
