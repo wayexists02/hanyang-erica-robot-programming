@@ -31,7 +31,7 @@ ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트�
 ## Execution
 
 1. 서버와 코드론을 통신 가능한 네트워크로 연결하고, 서버에 ```roscore```를 실행
-2. 서버에서 ```roslaunch codrone_alpha launch.launch```
+2. 서버에서 ```roslaunch codrone_alpha launch.launch```를 실행
 3. Raspberry pi에서 ```roslaunch codrone_alpha_pi launch.launch```를 
 
 
