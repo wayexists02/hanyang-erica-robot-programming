@@ -6,9 +6,20 @@
 ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트에서는 ROBOLINK사의 Codrone이라는 드론 위에 ROS와 그 노드들을 프로그래밍하고 구동해봄으로써, ROS를 학습하고자 한다.
 
 ## Goals
-- [X] 드론을 코드로 제어하기 (ROS topic으로 드론 제어 성공)
-- [ ] 색깔이 있는 링 통과하기
+#### 기본 동작
+- [X] 작동 확인
+- [X] ROS를 raspberry pi zero 보드에 설치
+- [X] 서버와 raspberry pi zero 보드간에 ROS 통신
+
+#### 손 인식
+- [X] 카메라 영상을 받아와서 확인
+- [X] 손 모양 데이터를 수집할 것
 - [X] 수신호로 드론에게 명령을 내리기
+
+#### 링 통과
+- [X] 드론을 코드로 제어하기 (ROS topic으로 드론 제어 성공)
+- [X] 색깔이 있는 링 인식
+- [ ] 색깔이 있는 링 통과하기
 
 ## Preparation
 
@@ -187,21 +198,7 @@ drone.close()
 
 
 
-
-
-## Plan
-
-- [X] 작동 확인
-- [X] ROS를 raspberry pi zero 보드에 설치
-- [X] 서버와 raspberry pi zero 보드간에 ROS 통신
-- [X] 카메라 영상을 받아와서 확인
-- [x] PC에서 드론 제어
-
-- [X] 손 모양 데이터를 수집할 것
-
-
-
-### Consideration
+## Consideration
 
 ROS 통신 방법 (Topic, Service, [Action *- optional*])을 완전히 이해할 것
 
