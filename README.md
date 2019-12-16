@@ -53,6 +53,11 @@ ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트�
 
 각 프로세스 구조는 위와 같다. 우선 라즈베리파이에 이미지를 카메라로부터 읽어서 퍼블리싱해주는 노드 ```image publisher```가 있고, PC에서는 이 이미지를 받는 노드인 ```image subscriber```가 있다. ```image subscriber```를 통해 이미지를 받은 후, PC의 ```hough circle command publisher```노드와 ```hand sign command publisher```노드가 이미지를 이어받아서 드론 컨트롤 명령을 생성해 낸다. 그리고, 명령을 다시 raspberry pi의 ```edrone adaptor```노드에게 전달해 주게 된다. ```edrone adaptor```노드는 전달받은 명령을 ROS 토픽 형식에서 json 형식으로 변환해서 자식 프로세스(fork()로 생성된)에게 전달해 주고, 자식 프로세스가 ```edrone``` 라이브러리를 통해 드론 컨트롤 보드에 명령을 내리게 된다.
 
+Raspberry pi에서 image publisher는 python 2.7, edrone adaptor는 C++로 작성되었고, edrone 프로세서는 python 3.7로 구동된다.
+PC에서 image subscriber는 2개 노드가 존재하고 각각 python 2.7과 C++로 작성되어 있으며, hand sign publisher와 hough circle command publisher는 python 2.7로 작성되어 있다.
+
+손 인식 모델은 pytorch 1.3.1(python 2.7) 버전에서 구현(모델 구조: https://github.com/wayexists02/hanyang-erica-robot-programming/issues/7).
+
 ### Control Flows
 
 먼저, 라즈베리파이에서 이미지를 PC로 송신하는 노드가 존재한다. 이 노드로부터 서버가 이미지를 받고 다음과 같은 연산을 거친다.
