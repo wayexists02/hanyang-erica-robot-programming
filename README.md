@@ -1,6 +1,7 @@
 # Robot Programming
 
-**팀 구성**: 김영평, 송희원, 이재영
+(전원 한양대 ERICA 캠퍼스)  
+**팀 구성**: 김영평(로봇공학과 3학년), 송희원(로봇공학과 3학년), 이재영(소프트웨어학부 4학년)
 
 
 ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트에서는 ROBOLINK사의 Codrone이라는 드론 위에 ROS와 그 노드들을 프로그래밍하고 구동해봄으로써, ROS를 학습하고자 한다.
@@ -23,20 +24,42 @@ ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트�
 
 ## Preparation
 
-1. server/catkin_src/* 의 모든 파일을 서버의 catkin_ws/src/ 에 넣는다.
-2. rpi/ros/codrone_alpha 를 raspberry pi 의 $HOME/ 에 넣는다.
-3. rpi/ros/catkin_src/* 의 모든 파일을 raspberry pi 의 catkin_ws/src/ 에 넣는다.
+1. ```server/catkin_src/*``` 의 모든 파일을 서버의 ```catkin_ws/src/``` 에 넣는다.
+2. ```rpi/ros/codrone_alpha``` 를 raspberry pi 의 ```$HOME/``` 에 넣는다.
+3. ```rpi/ros/catkin_src/*``` 의 모든 파일을 raspberry pi 의 ```catkin_ws/src/``` 에 넣는다.
 4. 각각 빌드한다.
 
 ## Execution
 
-1. 서버와 코드론을 통신 가능한 네트워크로 연결하고, 서버에 ```roscore```를 실행
-2. 서버에서 ```roslaunch codrone_alpha launch.launch```
-3. Raspberry pi에서 ```roslaunch codrone_alpha_pi launch.launch```를 
+1. 서버와 코드론을 통신 가능한 네트워크로 연결하고, ```ROS_MASTER_URI```와 ```ROS_IP```를 서버와 라즈베리에 각각 적절한 값으로 설정해준다.
+2. 서버에 ```roscore```를 실행 (**Optional**, 3번에서 자동으로 실행되니까 안해도됨)
+3. 서버에서 ```roslaunch codrone_alpha launch.launch```를 실행
+4. Raspberry pi에서 ```roslaunch codrone_alpha_pi launch.launch```를 
+
+라즈베리 카메라가 없다면, PC에서 ```roslaunch codrone_alpha test.launch```로 PC 웹캠으로 테스트해볼 수 있음.
 
 
 
 ## Detail
+
+### Programming Languages
+
+- C++ (ROS)
+- Python 2.7 (ROS)
+- Python 3.7 (Edrone)
+
+### Architectures
+
+![image](https://user-images.githubusercontent.com/26874750/70878312-5074a080-2004-11ea-90e7-8518aaab14a6.png)
+
+각 프로세스 구조는 위와 같다. 우선 라즈베리파이에 이미지를 카메라로부터 읽어서 퍼블리싱해주는 노드 ```image publisher```가 있고, PC에서는 이 이미지를 받는 노드인 ```image subscriber```가 있다. ```image subscriber```를 통해 이미지를 받은 후, PC의 ```hough circle command publisher```노드와 ```hand sign command publisher```노드가 이미지를 이어받아서 드론 컨트롤 명령을 생성해 낸다. 그리고, 명령을 다시 raspberry pi의 ```edrone adaptor```노드에게 전달해 주게 된다. ```edrone adaptor```노드는 전달받은 명령을 ROS 토픽 형식에서 json 형식으로 변환해서 자식 프로세스(fork()로 생성된)에게 전달해 주고, 자식 프로세스가 ```edrone``` 라이브러리를 통해 드론 컨트롤 보드에 명령을 내리게 된다.
+
+Raspberry pi에서 image publisher는 python 2.7, edrone adaptor는 C++로 작성되었고, edrone 프로세서는 python 3.7로 구동된다.
+PC에서 image subscriber는 2개 노드가 존재하고 각각 python 2.7과 C++로 작성되어 있으며, hand sign publisher와 hough circle command publisher는 python 2.7로 작성되어 있다.
+
+손 인식 모델은 pytorch 1.3.1(python 2.7) 버전에서 구현(모델 구조: https://github.com/wayexists02/hanyang-erica-robot-programming/issues/7).
+
+### Control Flows
 
 먼저, 라즈베리파이에서 이미지를 PC로 송신하는 노드가 존재한다. 이 노드로부터 서버가 이미지를 받고 다음과 같은 연산을 거친다.
 
@@ -50,7 +73,7 @@ ROS(Robot Operating Systems)를 공부하는 수업으로, 이번 프로젝트�
 
 Edrone adaptor가 하는 역할 중 하나는 드론 명령에 해당하는 ROS topic(DroneCommand.msg)을 json 형태로 변환시켜서 python3 프로세스에게 전달한다. Python3 프로세스는 edrone library를 직접 이용하면서 json을 해석하고 edrone library를 통해 직접 명령을 내린다.
 
-
+[Presentation_pdf](https://github.com/wayexists02/hanyang-erica-robot-programming/files/3976992/ROS.PBL._pdf.pdf)
 
 # About CoDrone
 
