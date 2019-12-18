@@ -75,7 +75,8 @@ Edrone adaptor가 하는 역할 중 하나는 드론 명령에 해당하는 ROS 
 
 ## Presentation Resourse
 
-[Presentation_pdf](https://github.com/wayexists02/hanyang-erica-robot-programming/files/3976992/ROS.PBL._pdf.pdf)
+[Presentation_pdf](https://github.com/wayexists02/hanyang-erica-robot-programming/files/3976992/ROS.PBL._pdf.pdf)  
+[Demo video](https://www.notion.so/wayexists/Robot-Programming-d216bb7468a74a83af2ed236b8ca6834)
 
 # About CoDrone
 
