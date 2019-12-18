@@ -73,6 +73,8 @@ PC에서 image subscriber는 2개 노드가 존재하고 각각 python 2.7과 C+
 
 Edrone adaptor가 하는 역할 중 하나는 드론 명령에 해당하는 ROS topic(DroneCommand.msg)을 json 형태로 변환시켜서 python3 프로세스에게 전달한다. Python3 프로세스는 edrone library를 직접 이용하면서 json을 해석하고 edrone library를 통해 직접 명령을 내린다.
 
+## Presentation Resourse
+
 [Presentation_pdf](https://github.com/wayexists02/hanyang-erica-robot-programming/files/3976992/ROS.PBL._pdf.pdf)
 
 # About CoDrone
