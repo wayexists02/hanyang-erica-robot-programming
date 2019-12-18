@@ -59,20 +59,20 @@ class SignPublisher():
             self.msg.roll = "0"
         else:
             if self.current_direction == "forward":
-                self.msg.pitch = "10"
+                self.msg.pitch = "15"
                 self.msg.roll = "0"
                 self.msg.yaw = "0"
             elif self.current_direction == "backward":
-                self.msg.pitch = "-10"
+                self.msg.pitch = "-15"
                 self.msg.roll = "0"
                 self.msg.yaw = "0"
             elif self.current_direction == "left":
                 self.msg.pitch = "0"
-                self.msg.roll = "5"
+                self.msg.roll = "10"
                 self.msg.yaw = "0"
             elif self.current_direction == "right":
                 self.msg.pitch = "0"
-                self.msg.roll = "-5"
+                self.msg.roll = "-10"
                 self.msg.yaw = "0"
             else:
                 self.msg.pitch = "0"
